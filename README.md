@@ -44,6 +44,7 @@
    VITE_SUPABASE_URL=<your-supabase-url>
    VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
    ```
+   If the login button stays on **"Signing in..."**, these environment variables are likely missing or incorrect.
 2. Install dependencies:
    ```
    npm install

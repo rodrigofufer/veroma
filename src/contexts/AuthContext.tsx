@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase, checkUserProfileExists, createProfileIfNeeded } from '../utils/supabaseClient';
+import {
+  supabase,
+  checkUserProfileExists,
+  createProfileIfNeeded,
+  isSupabaseConfigured
+} from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -9,7 +14,13 @@ interface AuthContextType {
   loading: boolean;
   emailVerified: boolean;
   role: string | null;
-  signUp: (data: { email: string; password: string; options?: { data: any } }) => Promise<void>;
+  signUp: (
+    data: {
+      email: string;
+      password: string;
+      options?: { data: Record<string, unknown> };
+    }
+  ) => Promise<void>;
   signIn: (data: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -250,8 +261,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [navigate]);
 
-  const signUp = async (data: { email: string; password: string; options?: { data: any } }) => {
+  const signUp = async (
+    data: {
+      email: string;
+      password: string;
+      options?: { data: Record<string, unknown> };
+    }
+  ) => {
     try {
+      if (!isSupabaseConfigured()) {
+        toast.error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+        throw new Error('Supabase not configured');
+      }
       console.log('Starting signup process for:', data.email);
       
       const { data: authData, error } = await supabase.auth.signUp({
@@ -292,7 +313,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       }
       
-    } catch (error: any) {
+    } catch (error) {
       console.error('Signup error:', error);
       
       // Handle specific error cases
@@ -312,6 +333,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (data: { email: string; password: string }) => {
     try {
+      if (!isSupabaseConfigured()) {
+        toast.error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+        throw new Error('Supabase not configured');
+      }
       console.log('Starting signin process for:', data.email);
       
       const { data: authData, error } = await supabase.auth.signInWithPassword({
@@ -347,7 +372,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Navigation is handled in the auth state change listener
-    } catch (error: any) {
+    } catch (error) {
       console.error('Signin error:', error);
       throw error;
     }
@@ -363,7 +388,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       toast.success('Password reset instructions sent to your email');
       navigate('/login');
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message);
       throw error;
     }
@@ -379,7 +404,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       toast.success('Password updated successfully. Please sign in with your new password.');
       await signOut();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message);
       throw error;
     }
@@ -397,7 +422,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       
       toast.success('Profile updated successfully');
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message);
       throw error;
     }
@@ -428,7 +453,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       toast.success('Verification email sent successfully');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error in resendVerificationEmail:', error);
       toast.error(error.message || 'Error sending verification email');
       throw error;
@@ -451,7 +476,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       return false;
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error checking email verification:', error);
       throw error;
     }
@@ -487,7 +512,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.location.href = '/';
       
       return Promise.resolve();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error during sign out:', error);
       
       // Force cleanup even if there's an error
