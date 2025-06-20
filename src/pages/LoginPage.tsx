@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ArrowLeft, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader } from 'lucide-react';
 import { isSupabaseConfigured } from '../utils/supabaseClient';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -15,6 +16,13 @@ export default function LoginPage() {
 
   // Check if Supabase is configured
   const supabaseConfigured = isSupabaseConfigured();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,14 +38,18 @@ export default function LoginPage() {
     try {
       console.log('Attempting to sign in with email:', email);
       await signIn({ email, password });
-
-      // Navigation is handled in the auth state change listener
       
+      // Show loading toast while auth state updates
+      toast.loading('Signing in...', { id: 'login' });
+      
+      // Navigation is handled in the auth state change listener
     } catch (err) {
       console.error('Login error:', err);
+      toast.dismiss('login');
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
+      setTimeout(() => toast.dismiss('login'), 2000);
     }
   };
 
@@ -147,7 +159,12 @@ export default function LoginPage() {
                 disabled={loading || !supabaseConfigured}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? (
+                  <span className="flex items-center">
+                    <Loader className="animate-spin h-4 w-4 mr-2" />
+                    Signing in...
+                  </span>
+                ) : 'Sign in'}
               </button>
             </div>
           </form>

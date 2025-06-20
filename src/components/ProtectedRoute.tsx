@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../utils/supabaseClient';
 import { Loader } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -57,6 +58,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!user) {
+    toast.error('Please log in to access this page');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
