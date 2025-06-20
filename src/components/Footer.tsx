@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Twitter, Linkedin, Building2, Mail, Phone, MapPin, Globe, Info, Users, HelpCircle } from 'lucide-react';
+import { Building2, Mail, Globe, Info, Users, HelpCircle } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -22,35 +22,6 @@ export default function Footer() {
             <p className="text-sm mb-4">
               Veroma is a civic platform for real participation – from your neighborhood to the world.
             </p>
-            <div className="flex space-x-4">
-              <a
-                href="https://twitter.com/veroma_civic"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a
-                href="https://github.com/veroma-platform"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-                aria-label="GitHub"
-              >
-                <Github className="h-5 w-5" />
-              </a>
-              <a
-                href="https://linkedin.com/company/veroma"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-            </div>
           </div>
           <div>
             <h3 className="text-white font-semibold mb-4">Platform</h3>
@@ -114,14 +85,6 @@ export default function Footer() {
                 <a href="mailto:hello@veroma.org" className="hover:text-white transition-colors">
                   hello@veroma.org
                 </a>
-              </li>
-              <li className="flex items-start">
-                <Phone className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-                <span>+1 (555) 123-4567</span>
-              </li>
-              <li className="flex items-start">
-                <MapPin className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-                <span>Global (Online Platform)</span>
               </li>
               <li className="flex items-start">
                 <Globe className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
