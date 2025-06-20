@@ -91,7 +91,7 @@ export const supabase = (() => {
     auth: {
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: typeof window !== 'undefined',
+      detectSessionInUrl: true,
       flowType: 'pkce',
       storage: getStorage(),
       storageKey: 'veroma-auth-token',
@@ -267,8 +267,7 @@ export const createProfileIfNeeded = async (
           role: 'user',
           votes_remaining: 10,
           votes_reset_at: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString(),
-          weekly_vote_limit: 10,
-          email_confirmed_at: new Date().toISOString() // Auto-confirm for simplicity
+          weekly_vote_limit: 10
         }]);
       
       if (error) {
