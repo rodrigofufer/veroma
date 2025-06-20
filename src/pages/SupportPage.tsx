@@ -55,14 +55,14 @@ export default function SupportPage() {
       title: "Getting Started Guide",
       description: "Learn the basics of using Veroma",
       icon: Book,
-      link: "/guide",
+      link: "/about",
       color: "blue"
     },
     {
       title: "Community Guidelines",
       description: "Our rules for constructive participation",
       icon: FileText,
-      link: "/guidelines",
+      link: "/terms",
       color: "green"
     },
     {
@@ -80,19 +80,19 @@ export default function SupportPage() {
       title: "Weekly Voting",
       description: "How the voting system works",
       icon: Calendar,
-      link: "/guide#voting"
+      link: "/about#voting"
     },
     {
       title: "Anonymous Posting",
       description: "Privacy options for sharing ideas",
       icon: Shield,
-      link: "/guide#privacy"
+      link: "/privacy"
     },
     {
       title: "Global Participation",
       description: "Contributing from anywhere",
       icon: Globe,
-      link: "/guide#global"
+      link: "/about#global"
     },
     {
       title: "Representative Roles",
@@ -160,6 +160,13 @@ export default function SupportPage() {
                       href={link.link}
                       className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col items-center text-center"
                       whileHover={{ y: -5 }}
+                      onClick={(e) => {
+                        // Handle internal navigation
+                        if (link.link.startsWith('/')) {
+                          e.preventDefault();
+                          navigate(link.link);
+                        }
+                      }}
                     >
                       <div className="bg-blue-50 p-2 rounded-full mb-2">
                         <link.icon className="h-5 w-5 text-blue-600" />
@@ -183,8 +190,10 @@ export default function SupportPage() {
                       onClick={() => {
                         if (resource.action) {
                           resource.action();
-                        } else {
+                        } else if (resource.link.startsWith('/')) {
                           navigate(resource.link);
+                        } else if (resource.link.startsWith('http')) {
+                          window.open(resource.link, '_blank');
                         }
                       }}
                     >
@@ -261,13 +270,11 @@ export default function SupportPage() {
                         Contact Support
                       </button>
                       <a
-                        href="https://docs.veroma.org"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href="mailto:hello@veroma.org"
                         className="inline-flex items-center px-4 py-2 border border-blue-800 text-blue-800 rounded-lg hover:bg-blue-50 transition-colors"
                       >
                         <ExternalLink className="h-5 w-5 mr-2" />
-                        Documentation
+                        Email Directly
                       </a>
                     </div>
                   </div>
@@ -326,10 +333,10 @@ export default function SupportPage() {
                       </label>
                       <textarea
                         id="message"
-                        rows={4}
                         value={contactForm.message}
                         onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
                         required
+                        rows={5}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
