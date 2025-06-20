@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, User, LogOut, Home, PlusCircle, LayoutDashboard, Shield, Building2 } from 'lucide-react';
+import { Menu, User, LogOut, Home, PlusCircle, LayoutDashboard, Shield, Building2, Info, HelpCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import VotesDisplay from './VotesDisplay';
@@ -36,10 +36,10 @@ export default function Header() {
 
   // Base menu items for all authenticated users
   const baseMenuItems = [
-    { path: '/', icon: Home, label: 'Home' },
-    { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/new-idea', icon: PlusCircle, label: 'New Idea' },
-    { path: '/profile', icon: User, label: 'Profile' }
+    { path: '/', icon: Home, label: 'Inicio' },
+    { path: '/dashboard', icon: LayoutDashboard, label: 'Panel' },
+    { path: '/new-idea', icon: PlusCircle, label: 'Nueva Idea' },
+    { path: '/profile', icon: User, label: 'Perfil' }
   ];
 
   // Role-specific menu items
@@ -51,7 +51,7 @@ export default function Header() {
       items.push({
         path: '/admin',
         icon: Shield,
-        label: 'Admin Dashboard'
+        label: 'Panel de Admin'
       });
     }
 
@@ -60,7 +60,7 @@ export default function Header() {
       items.push({
         path: '/new-idea?official=true',
         icon: Building2,
-        label: 'New Official Proposal'
+        label: 'Propuesta Oficial'
       });
     }
 
@@ -108,14 +108,14 @@ export default function Header() {
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     } ${
                       // Special styling for role-specific items
-                      (label === 'Admin Dashboard') ? 'border border-red-200 hover:border-red-300' :
-                      (label === 'New Official Proposal') ? 'border border-purple-200 hover:border-purple-300' :
+                      (label === 'Panel de Admin') ? 'border border-red-200 hover:border-red-300' :
+                      (label === 'Propuesta Oficial') ? 'border border-purple-200 hover:border-purple-300' :
                       ''
                     }`}
                   >
                     <Icon className={`h-4 w-4 mr-1.5 ${
-                      label === 'Admin Dashboard' ? 'text-red-600' :
-                      label === 'New Official Proposal' ? 'text-purple-600' :
+                      label === 'Panel de Admin' ? 'text-red-600' :
+                      label === 'Propuesta Oficial' ? 'text-purple-600' :
                       ''
                     }`} />
                     {label}
@@ -141,7 +141,9 @@ export default function Header() {
                     role === 'representative' ? 'bg-blue-100 text-blue-800 border-blue-200' :
                     'bg-gray-100 text-gray-800 border-gray-200'
                   }`}>
-                    {role}
+                    {role === 'authority' ? 'Autoridad' :
+                     role === 'administrator' ? 'Administrador' :
+                     role === 'representative' ? 'Representante' : role}
                   </span>
                 )}
                 
@@ -155,22 +157,29 @@ export default function Header() {
                   }`}
                 >
                   <LogOut className="h-4 w-4 mr-1.5" />
-                  {signingOut ? 'Signing Out...' : 'Sign Out'}
+                  {signingOut ? 'Cerrando...' : 'Cerrar Sesión'}
                 </button>
               </div>
             ) : (
               <div className="flex space-x-2">
                 <Link 
+                  to="/about"
+                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center"
+                >
+                  <Info className="h-4 w-4 mr-1.5" />
+                  Acerca de
+                </Link>
+                <Link 
                   to="/login" 
                   className="px-4 py-2 text-sm font-medium text-blue-800 hover:text-blue-900 transition-colors"
                 >
-                  Log in
+                  Iniciar Sesión
                 </Link>
                 <Link 
                   to="/signup" 
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-800 hover:bg-blue-900 rounded-md transition-colors"
                 >
-                  Sign up
+                  Registrarse
                 </Link>
               </div>
             )}
@@ -213,7 +222,9 @@ export default function Header() {
                         role === 'representative' ? 'bg-blue-100 text-blue-800 border-blue-200' :
                         'bg-gray-100 text-gray-800 border-gray-200'
                       }`}>
-                        {role}
+                        {role === 'authority' ? 'Autoridad' :
+                         role === 'administrator' ? 'Administrador' :
+                         role === 'representative' ? 'Representante' : role}
                       </span>
                     </div>
                   )}
@@ -236,23 +247,23 @@ export default function Header() {
                             : 'text-gray-700 hover:bg-gray-50'
                         } ${
                           // Special styling for role-specific items
-                          (label === 'Admin Dashboard') ? 'border-l-4 border-red-500' :
-                          (label === 'New Official Proposal') ? 'border-l-4 border-purple-500' :
+                          (label === 'Panel de Admin') ? 'border-l-4 border-red-500' :
+                          (label === 'Propuesta Oficial') ? 'border-l-4 border-purple-500' :
                           ''
                         }`}
                         onClick={() => setMenuOpen(false)}
                       >
                         <Icon className={`h-5 w-5 mr-2 ${
-                          label === 'Admin Dashboard' ? 'text-red-600' :
-                          label === 'New Official Proposal' ? 'text-purple-600' :
+                          label === 'Panel de Admin' ? 'text-red-600' :
+                          label === 'Propuesta Oficial' ? 'text-purple-600' :
                           ''
                         }`} />
                         {label}
                         {/* Role indicator for mobile */}
-                        {label === 'Admin Dashboard' && (
+                        {label === 'Panel de Admin' && (
                           <span className="ml-auto text-xs text-red-600 font-medium">Admin</span>
                         )}
-                        {label === 'New Official Proposal' && (
+                        {label === 'Propuesta Oficial' && (
                           <span className="ml-auto text-xs text-purple-600 font-medium">Rep</span>
                         )}
                       </Link>
@@ -269,24 +280,40 @@ export default function Header() {
                     }`}
                   >
                     <LogOut className="h-5 w-5 mr-2" />
-                    {signingOut ? 'Signing Out...' : 'Sign Out'}
+                    {signingOut ? 'Cerrando Sesión...' : 'Cerrar Sesión'}
                   </button>
                 </>
               ) : (
                 <>
                   <Link 
+                    to="/about"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Info className="h-5 w-5 mr-2" />
+                    Acerca de
+                  </Link>
+                  <Link 
+                    to="/support"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <HelpCircle className="h-5 w-5 mr-2" />
+                    Ayuda
+                  </Link>
+                  <Link 
                     to="/login" 
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Log in
+                    Iniciar Sesión
                   </Link>
                   <Link 
                     to="/signup" 
                     className="block px-3 py-2 rounded-md text-base font-medium bg-blue-800 text-white hover:bg-blue-900 transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Sign up
+                    Registrarse
                   </Link>
                 </>
               )}
