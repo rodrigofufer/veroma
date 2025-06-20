@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { isSupabaseConfigured } from '../utils/supabaseClient';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -12,8 +13,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  // Check if Supabase is configured
+  const supabaseConfigured = isSupabaseConfigured();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!supabaseConfigured) {
+      setError('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -53,6 +63,22 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {!supabaseConfigured && (
+            <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+              <div className="flex items-center">
+                <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0" />
+                <div>
+                  <div className="font-medium">Supabase Not Configured</div>
+                  <div className="mt-1 text-xs">
+                    Please set your Supabase environment variables in the .env file:
+                    <br />• VITE_SUPABASE_URL
+                    <br />• VITE_SUPABASE_ANON_KEY
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
@@ -118,7 +144,7 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !supabaseConfigured}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Signing in...' : 'Sign in'}

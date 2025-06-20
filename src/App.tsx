@@ -27,6 +27,7 @@ import NotFound from './pages/errors/NotFound';
 import AccessDenied from './pages/errors/AccessDenied';
 import ServerError from './pages/errors/ServerError';
 import ScrollToTop from './components/ScrollToTop';
+import SupabaseStatus from './components/SupabaseStatus';
 import './i18n';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
       <AuthProvider>
         <IdeasProvider>
           <Toaster position="top-center" />
+          <SupabaseStatus />
           <main id="main-content" tabIndex={-1}>
             <Routes>
             {/* Public routes */}
