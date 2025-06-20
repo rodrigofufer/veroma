@@ -339,6 +339,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       console.log('Starting signin process for:', data.email);
       
+      // Dismiss any existing login toast
+      toast.dismiss('login');
+      
+      // Show loading toast
+      toast.loading('Signing in...', { id: 'login' });
+      
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password
@@ -346,6 +352,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (error) {
         console.error('Signin error:', error);
+        toast.dismiss('login');
         
         if (error.message.includes('Email not confirmed')) {
           toast.error('Please verify your email address before signing in');
@@ -365,6 +372,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Signin successful:', authData);
+      toast.success('Signed in successfully!', { id: 'login' });
 
       // Set a simple session cookie to indicate login status
       if (authData.session) {
@@ -374,6 +382,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Navigation is handled in the auth state change listener
     } catch (error) {
       console.error('Signin error:', error);
+      toast.dismiss('login');
+      toast.error('Login failed. Please check your credentials and try again.');
       throw error;
     }
   };

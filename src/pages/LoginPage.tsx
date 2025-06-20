@@ -80,7 +80,7 @@ export default function LoginPage() {
               <div className="flex items-center">
                 <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0" />
                 <div>
-                  <div className="font-medium">Supabase Not Configured</div>
+                  <div className="font-medium">Database Not Configured</div>
                   <div className="mt-1 text-xs">
                     Please set your Supabase environment variables in the .env file:
                     <br />• VITE_SUPABASE_URL
