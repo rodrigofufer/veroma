@@ -73,7 +73,7 @@ interface AdminStats {
 }
 
 export default function AdminDashboardPage() {
-  const { user } = useAuth();
+  const { user, role, loading: authLoading } = useAuth();
   const { globalIdeas, updateIdea, deleteIdea, fetchGlobalIdeas } = useIdeas();
   const navigate = useNavigate();
   
@@ -97,46 +97,32 @@ export default function AdminDashboardPage() {
 
   // Check if user is admin
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
+    const loadData = async () => {
+      if (authLoading) return;
 
-    // Check user role from profile
-    const checkAdminRole = async () => {
-      try {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (error) throw error;
-
-        if (profile?.role !== 'administrator') {
-          toast.error('Access denied. Administrator privileges required.');
-          navigate('/dashboard');
-          return;
-        }
-
-        // User is admin, proceed with loading data
-        await Promise.all([
-          fetchUsers(),
-          fetchAdminStats(),
-          fetchAuditLogs(),
-          fetchGlobalIdeas()
-        ]);
-      } catch (error) {
-        console.error('Error checking admin role:', error);
-        toast.error('Error verifying permissions');
-        navigate('/dashboard');
-      } finally {
-        setLoading(false);
+      if (!user) {
+        navigate('/login');
+        return;
       }
+
+      if (role !== 'administrator' && role !== 'authority') {
+        toast.error('Access denied. Administrator privileges required.');
+        navigate('/dashboard');
+        setLoading(false);
+        return;
+      }
+
+      await Promise.all([
+        fetchUsers(),
+        fetchAdminStats(),
+        fetchAuditLogs(),
+        fetchGlobalIdeas()
+      ]);
+      setLoading(false);
     };
 
-    checkAdminRole();
-  }, [user, navigate]);
+    loadData();
+  }, [user, role, authLoading, navigate]);
 
   // Fetch functions
   const fetchUsers = async () => {
