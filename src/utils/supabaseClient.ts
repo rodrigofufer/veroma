@@ -23,9 +23,14 @@ const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
 const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(`Missing Supabase environment variables: 
-    URL: ${supabaseUrl ? 'defined' : 'missing'}, 
-    Key: ${supabaseAnonKey ? 'defined' : 'missing'}`);
+  // Log a warning instead of throwing to avoid breaking the UI when
+  // environment variables are not provided. Supabase functionality
+  // will simply be disabled in this case.
+  console.warn(
+    `Missing Supabase environment variables:\n` +
+    `  URL: ${supabaseUrl ? 'defined' : 'missing'}\n` +
+    `  Key: ${supabaseAnonKey ? 'defined' : 'missing'}`
+  );
 }
 
 // Get the current domain, handling development and production environments
