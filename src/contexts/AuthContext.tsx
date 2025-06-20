@@ -340,12 +340,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Signin successful:', authData);
-      
-      // Success handling is done in the auth state change listener
-      // But we'll add a fallback navigation here
-      if (authData.user?.email_confirmed_at) {
-        navigate('/dashboard');
+
+      // Set a simple session cookie to indicate login status
+      if (authData.session) {
+        document.cookie = 'veroma_session=active; path=/; SameSite=Lax';
       }
+
+      // Navigation is handled in the auth state change listener
     } catch (error: any) {
       console.error('Signin error:', error);
       throw error;
@@ -476,6 +477,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear any cached data
       localStorage.removeItem('veroma-auth-token');
       localStorage.removeItem('supabase.auth.token');
+
+      // Remove login cookie
+      document.cookie = 'veroma_session=; Max-Age=0; path=/; SameSite=Lax';
       
       toast.success('Signed out successfully');
       
