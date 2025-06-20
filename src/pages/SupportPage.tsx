@@ -115,9 +115,12 @@ export default function SupportPage() {
       window.location.href = mailtoLink;
       
       toast.success('Opening your email client...');
-      setName('');
-      setEmail('');
-      setMessage('');
+      setContactForm({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
     } catch (error) {
       toast.error('Failed to send message. Please try again.');
     } finally {
