@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../utils/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../utils/supabaseClient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BoltBadge from '../components/BoltBadge';
@@ -22,7 +22,7 @@ import toast from 'react-hot-toast';
 import { generateTestUsers } from '../utils/generateTestUsers';
 
 export default function AdminPage() {
-  const { user } = useAuth();
+  const { user, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -35,40 +35,28 @@ export default function AdminPage() {
   const [repPercentage, setRepPercentage] = useState<number>(10);
 
   useEffect(() => {
-    const checkAdminRole = async () => {
+    const checkRoleAndLoad = async () => {
+      if (authLoading) return;
+
       if (!user) {
         navigate('/login');
         return;
       }
 
-      try {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (error) throw error;
-
-        if (profile?.role !== 'administrator' && profile?.role !== 'authority') {
-          toast.error('Access denied. Administrator privileges required.');
-          navigate('/dashboard');
-          return;
-        }
-
-        setIsAdmin(true);
-        await fetchStats();
-      } catch (error) {
-        console.error('Error checking admin role:', error);
-        toast.error('Error verifying permissions');
+      if (role !== 'administrator' && role !== 'authority') {
+        toast.error('Access denied. Administrator privileges required.');
         navigate('/dashboard');
-      } finally {
         setLoading(false);
+        return;
       }
+
+      setIsAdmin(true);
+      await fetchStats();
+      setLoading(false);
     };
 
-    checkAdminRole();
-  }, [user, navigate]);
+    checkRoleAndLoad();
+  }, [user, role, authLoading, navigate]);
 
   const fetchStats = async () => {
     try {

@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   emailVerified: boolean;
+  role: string | null;
   signUp: (data: { email: string; password: string; options?: { data: any } }) => Promise<void>;
   signIn: (data: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
@@ -25,7 +26,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Helper to fetch user role from profiles table
+  const fetchUserRole = async (userId: string): Promise<string> => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user role:', error);
+        return 'user';
+      }
+
+      return data?.role || 'user';
+    } catch (err) {
+      console.error('Error in fetchUserRole:', err);
+      return 'user';
+    }
+  };
 
   // Function to sync email verification status
   const syncEmailVerification = async (currentUser: User | null) => {
@@ -78,9 +101,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.session) {
         setUser(data.session.user);
         await syncEmailVerification(data.session.user);
+        const r = await fetchUserRole(data.session.user.id);
+        setRole(r);
       } else {
         setUser(null);
         setEmailVerified(false);
+        setRole(null);
       }
     } catch (error) {
       console.error('Error refreshing session:', error);
@@ -115,9 +141,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             setUser(session.user);
             await syncEmailVerification(session.user);
+            const r = await fetchUserRole(session.user.id);
+            setRole(r);
           } else {
             setUser(null);
             setEmailVerified(false);
+            setRole(null);
           }
           
           setLoading(false);
@@ -154,9 +183,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           setUser(session.user);
           await syncEmailVerification(session.user);
+          const r = await fetchUserRole(session.user.id);
+          setRole(r);
         } else {
           setUser(null);
           setEmailVerified(false);
+          setRole(null);
         }
         
         setLoading(false);
@@ -167,6 +199,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Check if email is verified
           if (session?.user?.email_confirmed_at) {
             setEmailVerified(true);
+            if (session?.user) {
+              const r = await fetchUserRole(session.user.id);
+              setRole(r);
+            }
             toast.success('Welcome back!');
             navigate('/dashboard');
           } else {
@@ -183,6 +219,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         case 'SIGNED_OUT':
           setEmailVerified(false);
           setUser(null);
+          setRole(null);
           navigate('/');
           break;
         case 'PASSWORD_RECOVERY':
@@ -192,12 +229,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Re-sync email verification status when token is refreshed
           if (mounted && session?.user) {
             await syncEmailVerification(session.user);
+            const r = await fetchUserRole(session.user.id);
+            setRole(r);
           }
           break;
         case 'USER_UPDATED':
           if (mounted && session?.user) {
             setUser(session.user);
             await syncEmailVerification(session.user);
+            const r = await fetchUserRole(session.user.id);
+            setRole(r);
           }
           break;
       }
@@ -430,6 +471,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear local state
       setUser(null);
       setEmailVerified(false);
+      setRole(null);
       
       // Clear any cached data
       localStorage.removeItem('veroma-auth-token');
@@ -447,6 +489,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Force cleanup even if there's an error
       setUser(null);
       setEmailVerified(false);
+      setRole(null);
       localStorage.removeItem('veroma-auth-token');
       localStorage.removeItem('supabase.auth.token');
       
@@ -459,9 +502,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ 
-      user, 
-      loading, 
+      user,
+      loading,
       emailVerified,
+      role,
       signUp,
       signIn,
       signOut,

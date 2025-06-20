@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIdeas } from '../contexts/IdeasContext';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../utils/supabaseClient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BoltBadge from '../components/BoltBadge';
@@ -80,36 +79,15 @@ export default function NewIdeaPage() {
   const [showTips, setShowTips] = useState(false);
   const [showAnonymousInfo, setShowAnonymousInfo] = useState(false);
   const [showOfficialInfo, setShowOfficialInfo] = useState(false);
-  const [userRole, setUserRole] = useState<string>('user');
   const [formErrors, setFormErrors] = useState({
     country: '',
     votingEndsAt: ''
   });
   const { createIdea } = useIdeas();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const navigate = useNavigate();
 
   // Check user role on component mount
-  useEffect(() => {
-    const checkUserRole = async () => {
-      if (!user) return;
-      
-      try {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (error) throw error;
-        setUserRole(profile?.role || 'user');
-      } catch (error) {
-        console.error('Error checking user role:', error);
-      }
-    };
-
-    checkUserRole();
-  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,7 +117,7 @@ export default function NewIdeaPage() {
       }
 
       // Only representatives can create official proposals
-      if (formData.isOfficialProposal && userRole !== 'representative') {
+      if (formData.isOfficialProposal && role !== 'representative') {
         throw new Error('Only representatives can create official proposals');
       }
 
@@ -330,7 +308,7 @@ export default function NewIdeaPage() {
                 </div>
 
                 {/* Official Proposal Option (Representatives Only) */}
-                {userRole === 'representative' && (
+                {role === 'representative' && (
                   <div className="border-t pt-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-grow">
