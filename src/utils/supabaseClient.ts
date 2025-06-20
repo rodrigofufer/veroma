@@ -33,6 +33,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
+export const isSupabaseConfigured = (): boolean => {
+  return Boolean(supabaseUrl && supabaseAnonKey);
+};
+
 // Get the current domain, handling development and production environments
 const getCurrentDomain = () => {
   // Only available in browser environment
@@ -81,7 +85,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Add error handling and retry logic - only in browser environment
 if (typeof window !== 'undefined') {
-  supabase.auth.onAuthStateChange((event, session) => {
+  supabase.auth.onAuthStateChange((event) => {
     if (event === 'TOKEN_REFRESHED') {
       console.log('Auth token refreshed successfully');
     }
@@ -111,6 +115,7 @@ export const getEmailSettings = () => {
 };
 
 // Helper function to handle auth errors
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handleAuthError = (error: any) => {
   if (error.message.includes('Email link is invalid or has expired')) {
     return 'The verification link has expired. Please request a new one.';
@@ -186,7 +191,11 @@ export const checkUserProfileExists = async (userId: string): Promise<boolean> =
 };
 
 // Function to create a profile if it doesn't exist
-export const createProfileIfNeeded = async (userId: string, userData: any): Promise<boolean> => {
+export const createProfileIfNeeded = async (
+  userId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  userData: any
+): Promise<boolean> => {
   try {
     const profileExists = await checkUserProfileExists(userId);
     
