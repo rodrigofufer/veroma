@@ -36,6 +36,22 @@
 - Bolt.new (UI logic / builder)  
 - Lingo (Translation engine – coming soon)  
 
+## 🛠 Local Development
+
+1. Copy `.env.example` to `.env` and add your Supabase credentials:
+   ```
+   VITE_SUPABASE_URL=<your-supabase-url>
+   VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+   ```
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Start the development server:
+   ```
+   npm run dev
+   ```
+
 ---
 
 ## 💡 Why Veroma?
