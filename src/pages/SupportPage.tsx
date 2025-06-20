@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { HelpCircle, Book, MessageCircle, FileText, ArrowLeft, ExternalLink, Search, Mail, ChevronDown, ChevronUp, Check, AlertTriangle, Globe, Calendar, Shield, Users } from 'lucide-react';
+import { HelpCircle, Book, MessageCircle, FileText, ArrowLeft, ExternalLink, Mail, ChevronDown, ChevronUp, Shield, Users, Globe, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -9,7 +9,6 @@ import toast from 'react-hot-toast';
 
 export default function SupportPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [contactFormVisible, setContactFormVisible] = useState(false);
   const [contactForm, setContactForm] = useState({
@@ -103,31 +102,24 @@ export default function SupportPage() {
     }
   ];
 
-  const filteredFaqs = searchQuery 
-    ? faqs.filter(faq => 
-        faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : faqs;
-
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    
+
     try {
-      // Simulate API call
+      // In a real implementation, you would send this to your backend
+      // For now, we'll simulate sending and redirect to email client
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast.success('Your message has been sent! We\'ll get back to you soon.');
-      setContactFormVisible(false);
-      setContactForm({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
+      const mailtoLink = `mailto:hello@veroma.org?subject=Contact from ${encodeURIComponent(contactForm.name)}&body=${encodeURIComponent(contactForm.message)}`;
+      window.location.href = mailtoLink;
+      
+      toast.success('Opening your email client...');
+      setName('');
+      setEmail('');
+      setMessage('');
     } catch (error) {
-      toast.error('Failed to send message. Please try again later.');
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -153,20 +145,6 @@ export default function SupportPage() {
               <div className="flex items-center mb-8">
                 <HelpCircle className="h-8 w-8 text-blue-800 mr-3" />
                 <h1 className="text-3xl font-bold text-gray-900">Support Center</h1>
-              </div>
-
-              {/* Search Bar */}
-              <div className="mb-8">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search for help topics..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
               </div>
 
               {/* Quick Links */}
@@ -219,15 +197,8 @@ export default function SupportPage() {
               <section className="mb-12">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">Frequently Asked Questions</h2>
                 
-                {searchQuery && filteredFaqs.length === 0 && (
-                  <div className="bg-gray-50 rounded-lg p-6 text-center">
-                    <p className="text-gray-600 mb-2">No results found for "{searchQuery}"</p>
-                    <p className="text-sm text-gray-500">Try different keywords or contact our support team</p>
-                  </div>
-                )}
-                
                 <div className="space-y-4">
-                  {filteredFaqs.map((faq, index) => (
+                  {faqs.map((faq, index) => (
                     <motion.div
                       key={index}
                       className="border border-gray-200 rounded-lg overflow-hidden"
@@ -391,21 +362,6 @@ export default function SupportPage() {
                   </motion.form>
                 )}
               </motion.section>
-
-              {/* Support Status */}
-              <section className="mb-8">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start">
-                  <div className="bg-green-100 p-2 rounded-full mr-3 flex-shrink-0">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-green-800 mb-1">All Systems Operational</h3>
-                    <p className="text-sm text-green-700">
-                      Our platform is running smoothly. Average support response time: 4-6 hours.
-                    </p>
-                  </div>
-                </div>
-              </section>
 
               {/* Security Notice */}
               <section className="mb-8">
