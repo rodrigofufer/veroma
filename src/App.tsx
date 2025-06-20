@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { IdeasProvider } from './contexts/IdeasContext';
@@ -36,7 +36,8 @@ function App() {
       <AuthProvider>
         <IdeasProvider>
           <Toaster position="top-center" />
-          <Routes>
+          <main id="main-content" tabIndex={-1}>
+            <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -82,6 +83,7 @@ function App() {
             {/* Catch all route - 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </main>
         </IdeasProvider>
       </AuthProvider>
     </BrowserRouter>
