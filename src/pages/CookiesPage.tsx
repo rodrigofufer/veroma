@@ -58,7 +58,7 @@ export default function CookiesPage() {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. How We Use Cookies</h2>
                 <p className="text-gray-600 mb-4">We use cookies to:</p>
                 <ul className="list-disc pl-6 text-gray-600 mb-6">
-                  <li className="mb-2">Remember your login status</li>
+                  <li className="mb-2">Remember your login status using the `veroma_session` cookie</li>
                   <li className="mb-2">Maintain your preferences</li>
                   <li className="mb-2">Understand how you use our platform</li>
                   <li className="mb-2">Improve our services</li>

@@ -8,11 +8,12 @@
 
 ## ✨ Features (Current Version)
 
-- 🗳️ Weekly voting system: 10 votes per user, reset every Monday  
-- ✍️ Anonymous or public idea submission  
-- 🌐 Predictive country selection (accent-insensitive)  
-- 📱 Fully responsive design (mobile + desktop)  
-- 🌎 English UI (multilingual support with Lingo coming soon)  
+- 🗳️ Weekly voting system: 10 votes per user, reset every Monday
+- ✍️ Anonymous or public idea submission
+- 🌐 Predictive country selection (accent-insensitive)
+- 📱 Fully responsive design (mobile + desktop)
+- 🌎 English UI (multilingual support with Lingo coming soon)
+- 🍪 Simple session cookie to keep you logged in
 
 ---
 
@@ -64,6 +65,12 @@ Most civic platforms are constrained by geography, bureaucracy, or politics. Ver
 - 💬 Community-driven  
 
 Whether it’s fixing a broken streetlight or proposing a global climate resolution — every voice matters.
+
+---
+
+## 🍪 Cookies
+
+Veroma uses a lightweight cookie called `veroma_session` to keep you logged in after you authenticate. This cookie contains no personal data and expires when you sign out.
 
 ---
 
