@@ -270,7 +270,7 @@ export default function LandingPage() {
               exit={{ scale: 0.9, opacity: 0 }}
             >
               <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">¡Bienvenido a Veroma!</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Welcome to Veroma!</h2>
                 <button 
                   onClick={() => setShowIntroModal(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -287,8 +287,8 @@ export default function LandingPage() {
                     <Vote className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Plataforma Cívica Global</h3>
-                    <p className="text-gray-600 text-sm">Veroma es una plataforma que te permite compartir ideas, propuestas y quejas desde tu vecindario hasta el mundo entero.</p>
+                    <h3 className="font-medium text-gray-900">Global Civic Platform</h3>
+                    <p className="text-gray-600 text-sm">Veroma is a platform that allows you to share ideas, proposals, and complaints from your neighborhood to the entire world.</p>
                   </div>
                 </div>
                 
@@ -297,8 +297,8 @@ export default function LandingPage() {
                     <Calendar className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">10 Votos Semanales</h3>
-                    <p className="text-gray-600 text-sm">Cada semana recibes 10 votos para apoyar las ideas que más te importan. Los votos se reinician cada lunes.</p>
+                    <h3 className="font-medium text-gray-900">10 Weekly Votes</h3>
+                    <p className="text-gray-600 text-sm">Each week you receive 10 votes to support the ideas that matter most to you. Votes reset every Monday.</p>
                   </div>
                 </div>
                 
@@ -307,8 +307,8 @@ export default function LandingPage() {
                     <Building2 className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Propuestas Oficiales</h3>
-                    <p className="text-gray-600 text-sm">Los representantes gubernamentales pueden crear propuestas oficiales que reciben prioridad en la plataforma.</p>
+                    <h3 className="font-medium text-gray-900">Official Proposals</h3>
+                    <p className="text-gray-600 text-sm">Government representatives can create official proposals that receive priority on the platform.</p>
                   </div>
                 </div>
               </div>
@@ -321,13 +321,13 @@ export default function LandingPage() {
                   }}
                   className="flex-1 px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors"
                 >
-                  Crear Cuenta
+                  Create Account
                 </button>
                 <button
                   onClick={() => setShowIntroModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Explorar Primero
+                  Explore First
                 </button>
               </div>
             </motion.div>
@@ -364,11 +364,11 @@ export default function LandingPage() {
                 }}
               />
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight">
-                Tu Voz, De Lo Local a Lo Global
+                Your Voice, From Local to Global
               </h1>
               <p className="text-lg md:text-2xl text-gray-600 mb-8 md:mb-10 leading-relaxed">
-                Veroma empodera a los ciudadanos para plantear sus inquietudes, compartir ideas y votar propuestas
-                que impacten a sus comunidades y al mundo.
+                Veroma empowers citizens to raise their concerns, share ideas, and vote on proposals
+                that impact their communities and the world.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button 
@@ -378,7 +378,7 @@ export default function LandingPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {user ? 'Ir al Panel' : 'Comenzar Ahora'}
+                  {user ? 'Go to Dashboard' : 'Get Started'}
                   <ChevronRight className="inline-block ml-2 h-5 w-5" />
                 </motion.button>
                 <motion.button 
@@ -388,7 +388,7 @@ export default function LandingPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Conocer los Roles
+                  Learn About Roles
                   <Building2 className="inline-block ml-2 h-5 w-5" />
                 </motion.button>
               </div>
@@ -455,13 +455,13 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <div className="inline-block bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
-              ¿Cómo Funciona?
+              How It Works
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Tres pasos simples para participar
+              Three simple steps to participate
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Veroma hace que sea fácil contribuir a mejorar tu comunidad y el mundo
+              Veroma makes it easy to contribute to improving your community and the world
             </p>
           </motion.div>
 
@@ -480,14 +480,14 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">1. Comparte tu Idea</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">1. Share Your Idea</h3>
                 <p className="text-gray-600 text-center">
-                  Crea propuestas, reporta problemas o inicia votaciones sobre temas que te importan.
+                  Create proposals, report problems, or start votes on issues that matter to you.
                 </p>
                 <div className="mt-4 flex justify-center">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     <Check className="h-3 w-3 mr-1" />
-                    Fácil de crear
+                    Easy to create
                   </span>
                 </div>
               </div>
@@ -507,14 +507,14 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">2. Vota Semanalmente</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">2. Vote Weekly</h3>
                 <p className="text-gray-600 text-center">
-                  Recibe 10 votos cada semana para apoyar las ideas que consideres más importantes.
+                  Receive 10 votes each week to support the ideas you consider most important.
                 </p>
                 <div className="mt-4 flex justify-center">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <Calendar className="h-3 w-3 mr-1" />
-                    10 votos semanales
+                    10 weekly votes
                   </span>
                 </div>
               </div>
@@ -534,14 +534,14 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">3. Genera Impacto</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">3. Create Impact</h3>
                 <p className="text-gray-600 text-center">
-                  Las ideas populares ganan visibilidad y pueden convertirse en cambios reales.
+                  Popular ideas gain visibility and can become real changes.
                 </p>
                 <div className="mt-4 flex justify-center">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                     <Globe2 className="h-3 w-3 mr-1" />
-                    Alcance global
+                    Global reach
                   </span>
                 </div>
               </div>
@@ -560,13 +560,13 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <div className="inline-block bg-purple-100 text-purple-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
-              Roles en la Plataforma
+              Platform Roles
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Una Plataforma para Todos
+              A Platform for Everyone
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Ya seas ciudadano o representante gubernamental, puedes marcar la diferencia
+              Whether you're a citizen or a government representative, you can make a difference
             </p>
           </motion.div>
 
@@ -583,14 +583,14 @@ export default function LandingPage() {
                     <Users className="h-10 w-10 text-gray-600 group-hover:text-blue-600" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Ciudadano</h3>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Citizen</h3>
                 <p className="text-gray-600 text-center mb-6">
-                  Miembros de la comunidad que pueden crear ideas, votar y participar en discusiones cívicas.
+                  Community members who can create ideas, vote, and participate in civic discussions.
                 </p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-medium">10 votos semanales</span>
-                  <span className="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full font-medium">Crear propuestas</span>
-                  <span className="text-xs bg-purple-50 text-purple-600 px-3 py-1 rounded-full font-medium">Participación global</span>
+                  <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-medium">10 weekly votes</span>
+                  <span className="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full font-medium">Create proposals</span>
+                  <span className="text-xs bg-purple-50 text-purple-600 px-3 py-1 rounded-full font-medium">Global participation</span>
                 </div>
               </div>
             </motion.div>
@@ -607,14 +607,14 @@ export default function LandingPage() {
                     <Building2 className="h-10 w-10 text-purple-600" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Representante</h3>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Representative</h3>
                 <p className="text-gray-600 text-center mb-6">
-                  Funcionarios gubernamentales que pueden crear propuestas oficiales con prioridad en la plataforma.
+                  Government officials who can create official proposals with priority on the platform.
                 </p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  <span className="text-xs bg-purple-50 text-purple-600 px-3 py-1 rounded-full font-medium">Propuestas oficiales</span>
-                  <span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-medium">Fechas límite de votación</span>
-                  <span className="text-xs bg-pink-50 text-pink-600 px-3 py-1 rounded-full font-medium">Métricas detalladas</span>
+                  <span className="text-xs bg-purple-50 text-purple-600 px-3 py-1 rounded-full font-medium">Official proposals</span>
+                  <span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-medium">Voting deadlines</span>
+                  <span className="text-xs bg-pink-50 text-pink-600 px-3 py-1 rounded-full font-medium">Detailed metrics</span>
                 </div>
               </div>
             </motion.div>
@@ -630,7 +630,7 @@ export default function LandingPage() {
               onClick={() => navigate('/roles')}
               className="inline-flex items-center px-6 py-3 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors"
             >
-              Ver Detalles de Roles
+              View Role Details
               <ArrowRight className="ml-2 h-5 w-5" />
             </button>
           </motion.div>
@@ -648,14 +648,14 @@ export default function LandingPage() {
               viewport={{ once: true }}
             >
               <div className="inline-block bg-purple-100 text-purple-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
-                Destacado
+                Featured
               </div>
               <div className="flex items-center justify-center mb-4">
                 <Building2 className="h-8 w-8 text-purple-600 mr-3" />
-                <h2 className="text-3xl font-bold text-gray-900">Propuestas Oficiales</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Official Proposals</h2>
               </div>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Iniciativas presentadas por representantes gubernamentales con prioridad en la plataforma
+                Initiatives presented by government representatives with priority on the platform
               </p>
             </motion.div>
 
@@ -671,7 +671,7 @@ export default function LandingPage() {
                   onClick={() => navigate('/dashboard?filter=official')}
                   className="inline-flex items-center px-6 py-3 bg-purple-800 text-white rounded-lg hover:bg-purple-900 transition-colors"
                 >
-                  Ver Todas las Propuestas Oficiales
+                  View All Official Proposals
                   <Building2 className="ml-2 h-5 w-5" />
                 </button>
               </div>
@@ -691,11 +691,11 @@ export default function LandingPage() {
         >
           <div className="text-center mb-12">
             <div className="inline-block bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
-              Impacto Global
+              Global Impact
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Creciendo Juntos</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Growing Together</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Únete a miles de ciudadanos que están marcando la diferencia en comunidades de todo el mundo
+              Join thousands of citizens who are making a difference in communities worldwide
             </p>
           </div>
 
@@ -714,8 +714,8 @@ export default function LandingPage() {
                 <div className="text-4xl font-bold text-blue-800 mb-2 text-center">
                   {loading ? '...' : stats.totalIdeas.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600 text-center font-medium">Ideas Compartidas</div>
-                <p className="mt-2 text-xs text-gray-500 text-center">Propuestas e iniciativas de ciudadanos de todo el mundo</p>
+                <div className="text-sm text-gray-600 text-center font-medium">Ideas Shared</div>
+                <p className="mt-2 text-xs text-gray-500 text-center">Proposals and initiatives from citizens worldwide</p>
               </div>
             </motion.div>
 
@@ -733,8 +733,8 @@ export default function LandingPage() {
                 <div className="text-4xl font-bold text-green-800 mb-2 text-center">
                   {loading ? '...' : stats.totalUsers.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600 text-center font-medium">Ciudadanos Activos</div>
-                <p className="mt-2 text-xs text-gray-500 text-center">Miembros de la comunidad impulsando el cambio</p>
+                <div className="text-sm text-gray-600 text-center font-medium">Active Citizens</div>
+                <p className="mt-2 text-xs text-gray-500 text-center">Community members driving change</p>
               </div>
             </motion.div>
 
@@ -752,8 +752,8 @@ export default function LandingPage() {
                 <div className="text-4xl font-bold text-purple-800 mb-2 text-center">
                   {loading ? '...' : stats.totalCountries.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600 text-center font-medium">Países</div>
-                <p className="mt-2 text-xs text-gray-500 text-center">Alcance global a través de continentes</p>
+                <div className="text-sm text-gray-600 text-center font-medium">Countries</div>
+                <p className="mt-2 text-xs text-gray-500 text-center">Global reach across continents</p>
               </div>
             </motion.div>
           </div>
@@ -770,13 +770,13 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <div className="inline-block bg-green-100 text-green-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
-              Ideas Destacadas
+              Featured Ideas
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Ideas en Acción
+              Ideas in Action
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Descubre cómo ciudadanos como tú están marcando la diferencia, desde mejoras locales hasta iniciativas globales
+              Discover how citizens like you are making a difference, from local improvements to global initiatives
             </p>
           </motion.div>
 
@@ -811,7 +811,7 @@ export default function LandingPage() {
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
-                Reintentar
+                Retry
               </button>
             </motion.div>
           )}
@@ -824,7 +824,7 @@ export default function LandingPage() {
               animate={{ opacity: 1 }}
             >
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800 mb-4"></div>
-              <p className="text-gray-600">Cargando ideas...</p>
+              <p className="text-gray-600">Loading ideas...</p>
             </motion.div>
           )}
 
@@ -857,13 +857,13 @@ export default function LandingPage() {
                   animate={{ opacity: 1 }}
                 >
                   <Lightbulb className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-4">No se encontraron ideas para los filtros seleccionados.</p>
-                  <p className="text-gray-500 mb-6">¡Sé el primero en compartir una idea!</p>
+                  <p className="text-gray-600 mb-4">No ideas found for the selected filters.</p>
+                  <p className="text-gray-500 mb-6">Be the first to share an idea!</p>
                   <button
                     onClick={handleGetStarted}
                     className="px-6 py-3 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors"
                   >
-                    Compartir una Idea
+                    Share an Idea
                   </button>
                 </motion.div>
               )}
@@ -880,7 +880,7 @@ export default function LandingPage() {
               onClick={handleGetStarted}
               className="inline-flex items-center px-6 py-3 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors"
             >
-              Compartir Tu Idea
+              Share Your Idea
               <ChevronRight className="ml-2 h-5 w-5" />
             </button>
           </motion.div>
@@ -905,9 +905,9 @@ export default function LandingPage() {
               img.src = '/logowh.png';
             }}
           />
-          <h2 className="text-4xl font-bold mb-6">Únete al Movimiento Cívico</h2>
+          <h2 className="text-4xl font-bold mb-6">Join the Civic Movement</h2>
           <p className="text-xl mb-10 text-blue-100 max-w-3xl mx-auto leading-relaxed">
-            Sé parte de una plataforma que amplifica las voces ciudadanas e impulsa cambios positivos en comunidades de todo el mundo.
+            Be part of a platform that amplifies citizen voices and drives positive change in communities worldwide.
           </p>
           <motion.button 
             onClick={handleGetStarted}
@@ -916,7 +916,7 @@ export default function LandingPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {user ? 'Ir al Panel' : 'Crear una Cuenta'}
+            {user ? 'Go to Dashboard' : 'Create an Account'}
             <ChevronRight className="inline-block ml-2 h-5 w-5" />
           </motion.button>
         </motion.div>
@@ -932,13 +932,13 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <div className="inline-block bg-indigo-100 text-indigo-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
-              Características
+              Features
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Diseñado para la Participación Cívica
+              Designed for Civic Participation
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Herramientas poderosas que facilitan la colaboración y el cambio positivo
+              Powerful tools that facilitate collaboration and positive change
             </p>
           </motion.div>
 
@@ -954,9 +954,9 @@ export default function LandingPage() {
               <div className="bg-blue-50 p-3 rounded-lg inline-block mb-4">
                 <Vote className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Sistema de Votación Semanal</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Weekly Voting System</h3>
               <p className="text-gray-600 text-sm">
-                10 votos cada semana para apoyar las ideas que más te importan. Los votos se reinician cada lunes.
+                10 votes each week to support the ideas that matter most to you. Votes reset every Monday.
               </p>
             </motion.div>
 
@@ -971,9 +971,9 @@ export default function LandingPage() {
               <div className="bg-green-50 p-3 rounded-lg inline-block mb-4">
                 <Shield className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Publicación Anónima</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Anonymous Posting</h3>
               <p className="text-gray-600 text-sm">
-                Comparte ideas de forma anónima para proteger tu privacidad mientras contribuyes a la comunidad.
+                Share ideas anonymously to protect your privacy while contributing to the community.
               </p>
             </motion.div>
 
@@ -988,9 +988,9 @@ export default function LandingPage() {
               <div className="bg-purple-50 p-3 rounded-lg inline-block mb-4">
                 <Building2 className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Propuestas Oficiales</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Official Proposals</h3>
               <p className="text-gray-600 text-sm">
-                Los representantes pueden crear propuestas oficiales con plazos de votación definidos.
+                Representatives can create official proposals with defined voting deadlines.
               </p>
             </motion.div>
 
@@ -1005,9 +1005,9 @@ export default function LandingPage() {
               <div className="bg-orange-50 p-3 rounded-lg inline-block mb-4">
                 <Globe2 className="h-6 w-6 text-orange-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Alcance Global</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Global Reach</h3>
               <p className="text-gray-600 text-sm">
-                Desde tu vecindario hasta el mundo entero, tu voz puede crear un cambio real.
+                From your neighborhood to the entire world, your voice can create real change.
               </p>
             </motion.div>
           </div>
@@ -1024,10 +1024,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <div className="inline-block bg-amber-100 text-amber-800 px-4 py-1 rounded-full text-sm font-medium mb-4">
-              Preguntas Frecuentes
+              Frequently Asked Questions
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Respuestas a tus Dudas
+              Answers to Your Questions
             </h2>
           </motion.div>
 
@@ -1041,10 +1041,10 @@ export default function LandingPage() {
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
                 <Info className="h-5 w-5 text-blue-600 mr-2" />
-                ¿Cómo funciona el sistema de votación?
+                How does the voting system work?
               </h3>
               <p className="text-gray-600">
-                Cada usuario recibe 10 votos por semana. Los votos se reinician cada lunes a las 00:00 UTC. Puedes utilizar tus votos para apoyar u oponerte a ideas, y puedes cambiar o eliminar tus votos en cualquier momento.
+                Each user receives 10 votes per week. Votes reset every Monday at 00:00 UTC. You can use your votes to support or oppose ideas, and you can change or remove your votes at any time.
               </p>
             </motion.div>
 
@@ -1057,10 +1057,10 @@ export default function LandingPage() {
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
                 <Info className="h-5 w-5 text-blue-600 mr-2" />
-                ¿Puedo publicar de forma anónima?
+                Can I post anonymously?
               </h3>
               <p className="text-gray-600">
-                Sí, puedes elegir publicar ideas de forma anónima. Tu identidad se ocultará a otros usuarios, pero mantenemos registros internos para fines de moderación.
+                Yes, you can choose to post ideas anonymously. Your identity will be hidden from other users, but we maintain internal records for moderation purposes.
               </p>
             </motion.div>
 
@@ -1073,10 +1073,10 @@ export default function LandingPage() {
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
                 <Info className="h-5 w-5 text-blue-600 mr-2" />
-                ¿Qué sucede con las ideas exitosas?
+                What happens to successful ideas?
               </h3>
               <p className="text-gray-600">
-                Las ideas populares ganan visibilidad y pueden ser destacadas en nuestra sección de tendencias globales. También trabajamos con organizaciones locales y autoridades para ayudar a implementar propuestas viables.
+                Popular ideas gain visibility and may be featured in our global trending section. We also work with local organizations and authorities to help implement viable proposals.
               </p>
             </motion.div>
 
@@ -1089,10 +1089,10 @@ export default function LandingPage() {
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
                 <Info className="h-5 w-5 text-blue-600 mr-2" />
-                ¿Qué son las propuestas oficiales?
+                What are official proposals?
               </h3>
               <p className="text-gray-600">
-                Las propuestas oficiales son iniciativas creadas por representantes gubernamentales verificados. Reciben prioridad en la plataforma y tienen plazos de votación definidos. Los resultados pueden ser enviados a las autoridades correspondientes.
+                Official proposals are initiatives created by verified government representatives. They receive priority on the platform and have defined voting deadlines. Results may be forwarded to relevant authorities.
               </p>
             </motion.div>
           </div>
@@ -1107,7 +1107,7 @@ export default function LandingPage() {
               onClick={() => navigate('/support')}
               className="inline-flex items-center px-6 py-3 border border-blue-800 text-blue-800 rounded-lg hover:bg-blue-50 transition-colors"
             >
-              Ver Todas las Preguntas
+              View All Questions
               <ArrowRight className="ml-2 h-5 w-5" />
             </button>
           </motion.div>

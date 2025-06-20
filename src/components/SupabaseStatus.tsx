@@ -8,7 +8,7 @@ export default function SupabaseStatus() {
   const [showStatus, setShowStatus] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Auto-colapsar el estado después de 5 segundos si está configurado
+  // Auto-collapse status after 5 seconds if configured
   useEffect(() => {
     if (isConfigured) {
       const timer = setTimeout(() => {
@@ -42,7 +42,7 @@ export default function SupabaseStatus() {
               <div className="bg-green-100 p-1.5 rounded-full mr-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
               </div>
-              <span className="font-medium">Base de datos conectada</span>
+              <span className="font-medium">Database connected</span>
             </div>
             <button className="ml-2 text-green-700 hover:text-green-900">
               {isCollapsed ? (
@@ -57,7 +57,7 @@ export default function SupabaseStatus() {
                 setShowStatus(false);
               }}
               className="ml-1 text-green-700 hover:text-green-900"
-              aria-label="Cerrar"
+              aria-label="Close"
             >
               <X className="h-4 w-4" />
             </button>
@@ -74,10 +74,10 @@ export default function SupabaseStatus() {
                 <div className="space-y-2">
                   <div className="flex items-center">
                     <Database className="h-3.5 w-3.5 mr-2 text-green-600" />
-                    <span className="text-xs">Supabase conectado correctamente</span>
+                    <span className="text-xs">Supabase connected successfully</span>
                   </div>
                   <div className="text-xs text-gray-500">
-                    Todas las funciones de la aplicación están disponibles
+                    All application features are available
                   </div>
                 </div>
               </motion.div>
@@ -102,12 +102,12 @@ export default function SupabaseStatus() {
               <div className="bg-red-100 p-1.5 rounded-full mr-2">
                 <AlertTriangle className="h-4 w-4 text-red-600" />
               </div>
-              <div className="font-medium text-red-800">Base de datos no configurada</div>
+              <div className="font-medium text-red-800">Database not configured</div>
             </div>
             <button 
               onClick={() => setShowStatus(false)}
               className="text-red-700 hover:text-red-900"
-              aria-label="Cerrar"
+              aria-label="Close"
             >
               <X className="h-4 w-4" />
             </button>
@@ -116,14 +116,14 @@ export default function SupabaseStatus() {
         
         <div className="p-4 bg-white">
           <div className="text-sm text-gray-700 space-y-3">
-            <p>Para conectar la base de datos, configure las variables de entorno en el archivo <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">.env</code>:</p>
+            <p>To connect the database, set the environment variables in the <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">.env</code> file:</p>
             <div className="bg-gray-50 p-3 rounded border border-gray-200 font-mono text-xs">
-              <div className="text-blue-700">VITE_SUPABASE_URL=<span className="text-gray-500">su_url_de_supabase</span></div>
-              <div className="text-blue-700">VITE_SUPABASE_ANON_KEY=<span className="text-gray-500">su_clave_anónima</span></div>
+              <div className="text-blue-700">VITE_SUPABASE_URL=<span className="text-gray-500">your_supabase_url</span></div>
+              <div className="text-blue-700">VITE_SUPABASE_ANON_KEY=<span className="text-gray-500">your_anon_key</span></div>
             </div>
             <div className="flex items-center text-xs text-red-600 bg-red-50 p-2 rounded">
               <AlertTriangle className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-              <span>Sin conexión a la base de datos, la mayoría de las funciones no estarán disponibles</span>
+              <span>Without database connection, most features will not be available</span>
             </div>
             <a 
               href="https://supabase.com/docs/guides/getting-started/quickstarts/reactjs"
@@ -132,7 +132,7 @@ export default function SupabaseStatus() {
               className="text-xs text-blue-600 hover:text-blue-800 flex items-center"
             >
               <ExternalLink className="h-3 w-3 mr-1" />
-              Consultar documentación de Supabase
+              View Supabase documentation
             </a>
           </div>
         </div>

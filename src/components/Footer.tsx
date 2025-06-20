@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Twitter, Linkedin, Building2, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { Github, Twitter, Linkedin, Building2, Mail, Phone, MapPin, Globe, Info, Users, HelpCircle } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -20,7 +20,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm mb-4">
-              Veroma es una plataforma cívica para participación real – desde tu vecindario hasta el mundo entero.
+              Veroma is a civic platform for real participation – from your neighborhood to the world.
             </p>
             <div className="flex space-x-4">
               <a
@@ -53,30 +53,30 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-4">Plataforma</h3>
+            <h3 className="text-white font-semibold mb-4">Platform</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/about" className="hover:text-white transition-colors flex items-center">
                   <Info className="h-4 w-4 mr-2" />
-                  Acerca de Veroma
+                  About Veroma
                 </Link>
               </li>
               <li>
                 <Link to="/roles" className="hover:text-white transition-colors flex items-center">
                   <Users className="h-4 w-4 mr-2" />
-                  Roles y Permisos
+                  Roles & Permissions
                 </Link>
               </li>
               <li>
                 <Link to="/representatives" className="hover:text-white transition-colors flex items-center">
                   <Building2 className="h-4 w-4 mr-2" />
-                  Representantes
+                  Representatives
                 </Link>
               </li>
               <li>
                 <Link to="/support" className="hover:text-white transition-colors flex items-center">
                   <HelpCircle className="h-4 w-4 mr-2" />
-                  Centro de Ayuda
+                  Help Center
                 </Link>
               </li>
             </ul>
@@ -86,28 +86,28 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link to="/terms" className="hover:text-white transition-colors">
-                  Términos de Servicio
+                  Terms of Service
                 </Link>
               </li>
               <li>
                 <Link to="/privacy" className="hover:text-white transition-colors">
-                  Política de Privacidad
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link to="/disclaimer" className="hover:text-white transition-colors">
-                  Aviso Legal
+                  Legal Notice
                 </Link>
               </li>
               <li>
                 <Link to="/cookies" className="hover:text-white transition-colors">
-                  Política de Cookies
+                  Cookie Policy
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-4">Contacto</h3>
+            <h3 className="text-white font-semibold mb-4">Contact</h3>
             <ul className="space-y-3">
               <li className="flex items-start">
                 <Mail className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
@@ -121,7 +121,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-                <span>Global (Plataforma en línea)</span>
+                <span>Global (Online Platform)</span>
               </li>
               <li className="flex items-start">
                 <Globe className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
@@ -135,16 +135,13 @@ export default function Footer() {
         
         <div className="mt-12 pt-8 border-t border-gray-800 text-center">
           <p className="text-sm">
-            &copy; {new Date().getFullYear()} Veroma. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Veroma. All rights reserved.
           </p>
           <p className="text-xs mt-2 text-gray-500">
-            Plataforma cívica para participación ciudadana global.
+            Global civic platform for citizen participation.
           </p>
         </div>
       </div>
     </footer>
   );
 }
-
-// Add missing imports
-import { Info, Users, HelpCircle } from 'lucide-react';
