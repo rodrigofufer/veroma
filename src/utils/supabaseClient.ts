@@ -22,17 +22,6 @@ const getEnvVar = (key: string): string => {
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
 const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  // Log a warning instead of throwing to avoid breaking the UI when
-  // environment variables are not provided. Supabase functionality
-  // will simply be disabled in this case.
-  console.warn(
-    `Missing Supabase environment variables:\n` +
-    `  URL: ${supabaseUrl ? 'defined' : 'missing'}\n` +
-    `  Key: ${supabaseAnonKey ? 'defined' : 'missing'}`
-  );
-}
-
 export const isSupabaseConfigured = (): boolean => {
   return Boolean(supabaseUrl && supabaseAnonKey);
 };
@@ -57,34 +46,76 @@ const getStorage = () => {
   return undefined;
 };
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: typeof window !== 'undefined',
-    flowType: 'pkce',
-    storage: getStorage(),
-    storageKey: 'veroma-auth-token',
-    debug: getEnvVar('NODE_ENV') === 'development'
-  },
-  global: {
-    headers: {
-      'x-application-name': 'veroma'
-    }
-  },
-  // Add retryable error codes
-  realtime: {
-    params: {
-      eventsPerSecond: 10
-    }
-  },
-  db: {
-    schema: 'public'
-  }
-});
+// Create a mock client for when Supabase is not configured
+const createMockClient = () => {
+  const mockAuth = {
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+    signUp: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Supabase not configured' } }),
+    signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Supabase not configured' } }),
+    signOut: () => Promise.resolve({ error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    resetPasswordForEmail: () => Promise.resolve({ data: {}, error: { message: 'Supabase not configured' } }),
+    updateUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Supabase not configured' } })
+  };
 
-// Add error handling and retry logic - only in browser environment
-if (typeof window !== 'undefined') {
+  const mockFrom = () => ({
+    select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }) }),
+    insert: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    update: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }),
+    delete: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) })
+  });
+
+  const mockRpc = () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
+
+  return {
+    auth: mockAuth,
+    from: mockFrom,
+    rpc: mockRpc
+  };
+};
+
+// Only create the real client if both URL and key are provided
+export const supabase = (() => {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn(
+      `Missing Supabase environment variables:\n` +
+      `  URL: ${supabaseUrl ? 'defined' : 'missing'}\n` +
+      `  Key: ${supabaseAnonKey ? 'defined' : 'missing'}\n` +
+      `Using mock client. Please configure your .env file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.`
+    );
+    return createMockClient();
+  }
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: typeof window !== 'undefined',
+      flowType: 'pkce',
+      storage: getStorage(),
+      storageKey: 'veroma-auth-token',
+      debug: getEnvVar('NODE_ENV') === 'development'
+    },
+    global: {
+      headers: {
+        'x-application-name': 'veroma'
+      }
+    },
+    // Add retryable error codes
+    realtime: {
+      params: {
+        eventsPerSecond: 10
+      }
+    },
+    db: {
+      schema: 'public'
+    }
+  });
+})();
+
+// Add error handling and retry logic - only in browser environment and when Supabase is configured
+if (typeof window !== 'undefined' && isSupabaseConfigured()) {
   supabase.auth.onAuthStateChange((event) => {
     if (event === 'TOKEN_REFRESHED') {
       console.log('Auth token refreshed successfully');
@@ -129,11 +160,18 @@ export const handleAuthError = (error: any) => {
   if (error.message.includes('Email not confirmed')) {
     return 'Please verify your email before logging in.';
   }
+  if (error.message.includes('Supabase not configured')) {
+    return 'Database connection not configured. Please contact support.';
+  }
   return error.message || 'An error occurred during authentication.';
 };
 
 // Session recovery helper
 export const recoverSession = async () => {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+  
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) throw error;
@@ -146,6 +184,14 @@ export const recoverSession = async () => {
 
 // Public stats fetching function
 export const fetchPublicStats = async () => {
+  if (!isSupabaseConfigured()) {
+    return {
+      totalIdeas: 0,
+      totalUsers: 0,
+      totalCountries: 0
+    };
+  }
+  
   try {
     const { data, error } = await supabase.rpc('get_public_stats');
     
@@ -171,6 +217,10 @@ export const fetchPublicStats = async () => {
 
 // Function to check if a user exists in the profiles table
 export const checkUserProfileExists = async (userId: string): Promise<boolean> => {
+  if (!isSupabaseConfigured()) {
+    return false;
+  }
+  
   try {
     const { data, error } = await supabase
       .from('profiles')
@@ -196,6 +246,10 @@ export const createProfileIfNeeded = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userData: any
 ): Promise<boolean> => {
+  if (!isSupabaseConfigured()) {
+    return false;
+  }
+  
   try {
     const profileExists = await checkUserProfileExists(userId);
     
