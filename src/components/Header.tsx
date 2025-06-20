@@ -1,52 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, User, LogOut, Home, PlusCircle, LayoutDashboard, Shield, Building2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../utils/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import VotesDisplay from './VotesDisplay';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [userRole, setUserRole] = useState<string>('user');
-  const [loading, setLoading] = useState(true);
   const [signingOut, setSigningOut] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Fetch user role when user changes
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (!user) {
-        setUserRole('user');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (error) {
-          console.error('Error fetching user role:', error);
-          setUserRole('user');
-        } else {
-          setUserRole(profile?.role || 'user');
-        }
-      } catch (error) {
-        console.error('Error in fetchUserRole:', error);
-        setUserRole('user');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserRole();
-  }, [user]);
 
   const handleSignOut = async () => {
     if (signingOut) return; // Prevent multiple clicks
@@ -83,7 +47,7 @@ export default function Header() {
     const items = [];
 
     // Admin Dashboard for administrators and authorities
-    if (userRole === 'administrator' || userRole === 'authority') {
+    if (role === 'administrator' || role === 'authority') {
       items.push({
         path: '/admin',
         icon: Shield,
@@ -92,7 +56,7 @@ export default function Header() {
     }
 
     // New Official Proposal for representatives
-    if (userRole === 'representative') {
+    if (role === 'representative') {
       items.push({
         path: '/new-idea?official=true',
         icon: Building2,
@@ -170,14 +134,14 @@ export default function Header() {
             {user ? (
               <div className="flex items-center space-x-3">
                 {/* Role Badge */}
-                {!loading && userRole !== 'user' && (
+                {!authLoading && role !== 'user' && (
                   <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
-                    userRole === 'authority' ? 'bg-purple-100 text-purple-800 border-purple-200' :
-                    userRole === 'administrator' ? 'bg-red-100 text-red-800 border-red-200' :
-                    userRole === 'representative' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                    role === 'authority' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                    role === 'administrator' ? 'bg-red-100 text-red-800 border-red-200' :
+                    role === 'representative' ? 'bg-blue-100 text-blue-800 border-blue-200' :
                     'bg-gray-100 text-gray-800 border-gray-200'
                   }`}>
-                    {userRole}
+                    {role}
                   </span>
                 )}
                 
@@ -241,15 +205,15 @@ export default function Header() {
                   </div>
 
                   {/* Role Badge for Mobile */}
-                  {!loading && userRole !== 'user' && (
+                  {!authLoading && role !== 'user' && (
                     <div className="px-3 py-2">
                       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${
-                        userRole === 'authority' ? 'bg-purple-100 text-purple-800 border-purple-200' :
-                        userRole === 'administrator' ? 'bg-red-100 text-red-800 border-red-200' :
-                        userRole === 'representative' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                        role === 'authority' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                        role === 'administrator' ? 'bg-red-100 text-red-800 border-red-200' :
+                        role === 'representative' ? 'bg-blue-100 text-blue-800 border-blue-200' :
                         'bg-gray-100 text-gray-800 border-gray-200'
                       }`}>
-                        {userRole}
+                        {role}
                       </span>
                     </div>
                   )}
