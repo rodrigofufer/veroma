@@ -232,6 +232,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: data.email,
         password: data.password
       });
+
+      if (error) {
         console.error('Error in Supabase login:', error);
         // Make sure to dismiss the loading toast
         toast.dismiss('auth-signin'); 
