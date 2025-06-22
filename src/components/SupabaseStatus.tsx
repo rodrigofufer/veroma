@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AlertCircle, CheckCircle, Loader, RefreshCw } from 'lucide-react';
 import { supabase, isSupabaseConfigured, syncEmailConfirmation } from '../utils/supabaseClient';
-import toast from 'react-hot-toast'; 
+import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function SupabaseStatus() {
   const [status, setStatus] = useState<'checking' | 'connected' | 'error'>('checking');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const { user, refreshSession } = useAuth();
 
   const checkConnection = useCallback(async () => {
@@ -57,6 +58,15 @@ export default function SupabaseStatus() {
 
   if (status === 'checking') {
     return (
+      <div className="fixed bottom-4 left-4 z-50 bg-gray-700 bg-opacity-80 p-3 rounded-lg shadow-lg flex items-center space-x-2">
+        <Loader className="h-4 w-4 text-white animate-spin" />
+        <span className="text-xs text-white">Checking connection...</span>
+      </div>
+    );
+  }
+
+  if (status === 'connected') {
+    return (
       <div className="fixed bottom-4 left-4 z-50 bg-white p-3 rounded-lg shadow-lg flex items-center space-x-2">
         <Loader className="h-5 w-5 text-blue-600 animate-spin mr-2" />
         <span className="text-sm text-gray-600">Checking database connection...</span>
@@ -66,21 +76,32 @@ export default function SupabaseStatus() {
 
   if (status === 'error') {
     return (
-      <div className="fixed bottom-4 left-4 z-50 bg-red-50 p-4 rounded-lg shadow-lg border border-red-200 max-w-sm">
+      isVisible ? (
+      <div className="fixed bottom-4 left-4 z-50 bg-red-50 p-3 rounded-lg shadow-lg border border-red-200 max-w-xs">
         <div className="flex items-center">
           <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
           <span className="text-sm font-medium text-red-800">Database connection error</span>
+          <button 
+            onClick={() => setIsVisible(false)} 
+            className="ml-auto -mr-1.5 text-red-400 hover:text-red-600"
+          >
+            <span className="sr-only">Close</span>
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
         {errorMessage && (
-          <div className="mt-1 text-xs text-red-600 max-w-xs">
+          <div className="mt-1 text-xs text-red-600 max-w-xs overflow-hidden text-ellipsis">
             {errorMessage}
           </div>
         )}
-        <div className="mt-2 flex justify-end">
+        <div className="mt-2 flex justify-between">
+          <div className="text-xs text-red-600">Check your .env file</div>
           <button
             onClick={checkConnection}
             disabled={isRetrying}
-            className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+            className="inline-flex items-center px-2 py-1 text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 disabled:opacity-50"
           >
             {isRetrying ? (
               <Loader className="h-3.5 w-3.5 animate-spin mr-1.5" />
@@ -91,6 +112,7 @@ export default function SupabaseStatus() {
           </button>
         </div>
       </div>
+      ) : null
     );
   }
 }

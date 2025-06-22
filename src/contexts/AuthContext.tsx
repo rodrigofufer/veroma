@@ -127,8 +127,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
-        if (mounted) {
-          if (session?.user) {
+          email: data.email.trim(),
+          password: data.password
             const profileExists = await checkUserProfileExists(session.user.id);
             if (!profileExists) {
               await createProfileIfNeeded(session.user.id, {
@@ -239,7 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.error('Error in Supabase login:', error);
         // Make sure to dismiss the loading toast
-        toast.dismiss('auth-signin');
+        toast.dismiss('auth-signin'); 
         
         let friendlyMessage;
         if (error.message.includes('Email not confirmed')) {
@@ -247,7 +247,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           navigate('/verify-email', { 
             state: { 
               email: data.email,
-              message: 'Your email is not verified. Please check your inbox.'
+              message: 'Your email is not verified. Please check your inbox and click the verification link.'
             }
           });
         } else if (error.message.includes('Invalid login credentials')) {
