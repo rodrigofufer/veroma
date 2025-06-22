@@ -40,7 +40,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Helper to fetch user role from profiles table
   const fetchUserRole = async (userId: string): Promise<string> => {
     try {
       const { data, error } = await supabase
@@ -61,7 +60,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Function to sync email verification status
   const syncEmailVerification = async (currentUser: User | null) => {
     if (!currentUser) {
       setEmailVerified(false);
@@ -69,12 +67,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // Check if email is confirmed in auth.users
       const isVerifiedInAuth = !!currentUser.email_confirmed_at;
       
       if (isVerifiedInAuth) {
         try {
-          // Update profiles table to match auth.users using the sync function
           const { error: syncError } = await supabase.rpc('sync_user_email_confirmation', {
             user_id: currentUser.id
           });
@@ -93,22 +89,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setEmailVerified(false);
     }
   };
-
-  // Function to refresh the session
+  
   const refreshSession = async () => {
     try {
       setLoading(true);
-      
-      // Force refresh the session
       const { data, error } = await supabase.auth.refreshSession();
-      
       if (error) {
         console.error('Session refresh error:', error);
         setUser(null);
         setEmailVerified(false);
         return;
       }
-      
       if (data.session) {
         setUser(data.session.user);
         await syncEmailVerification(data.session.user);
@@ -131,25 +122,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
     
-    // Get initial session
     const initializeAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (mounted) {
           if (session?.user) {
-            // Check if user profile exists
             const profileExists = await checkUserProfileExists(session.user.id);
-            
             if (!profileExists) {
-              console.log('Profile does not exist, creating...');
               await createProfileIfNeeded(session.user.id, {
                 email: session.user.email,
                 name: session.user.user_metadata?.name || 'User',
                 country: session.user.user_metadata?.country || 'Unknown'
               });
             }
-            
             setUser(session.user);
             await syncEmailVerification(session.user);
             const r = await fetchUserRole(session.user.id);
@@ -159,7 +145,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setEmailVerified(false);
             setRole(null);
           }
-          
           setLoading(false);
         }
       } catch (error) {
@@ -174,24 +159,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state change:', event, session?.user?.email_confirmed_at);
-      
       if (mounted) {
         if (session?.user) {
-          // Check if user profile exists
           const profileExists = await checkUserProfileExists(session.user.id);
-          
           if (!profileExists) {
-            console.log('Profile does not exist during auth change, creating...');
             await createProfileIfNeeded(session.user.id, {
               email: session.user.email,
               name: session.user.user_metadata?.name || 'User',
               country: session.user.user_metadata?.country || 'Unknown'
             });
           }
-          
           setUser(session.user);
           await syncEmailVerification(session.user);
           const r = await fetchUserRole(session.user.id);
@@ -201,28 +179,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setEmailVerified(false);
           setRole(null);
         }
-        
         setLoading(false);
       }
       
       switch (event) {
         case 'SIGNED_IN':
-          // Check if email is verified
           if (session?.user?.email_confirmed_at) {
             setEmailVerified(true);
             if (session?.user) {
               const r = await fetchUserRole(session.user.id);
               setRole(r);
             }
-            toast.success('Welcome back!');
+            toast.success('¡Bienvenido de nuevo!');
             navigate('/dashboard');
           } else {
             setEmailVerified(false);
-            toast.error('Please verify your email address to continue');
+            toast.error('Por favor, verifica tu correo electrónico para continuar');
             navigate('/verify-email', {
               state: {
                 email: session?.user?.email,
-                message: 'Please verify your email address to access all features.'
+                message: 'Por favor, verifica tu correo para acceder a todas las funciones.'
               }
             });
           }
@@ -233,25 +209,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setRole(null);
           navigate('/');
           break;
-        case 'PASSWORD_RECOVERY':
-          navigate('/reset-password');
-          break;
-        case 'TOKEN_REFRESHED':
-          // Re-sync email verification status when token is refreshed
-          if (mounted && session?.user) {
-            await syncEmailVerification(session.user);
-            const r = await fetchUserRole(session.user.id);
-            setRole(r);
-          }
-          break;
-        case 'USER_UPDATED':
-          if (mounted && session?.user) {
-            setUser(session.user);
-            await syncEmailVerification(session.user);
-            const r = await fetchUserRole(session.user.id);
-            setRole(r);
-          }
-          break;
       }
     });
 
@@ -261,284 +218,171 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [navigate]);
 
-  const signUp = async (
-    data: {
-      email: string;
-      password: string;
-      options?: { data: Record<string, unknown> };
-    }
-  ) => {
-    try {
-      if (!isSupabaseConfigured()) {
-        toast.error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
-        throw new Error('Supabase not configured');
-      }
-      console.log('Starting signup process for:', data.email);
-      
-      const { data: authData, error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: data.options?.data,
-          emailRedirectTo: `${window.location.origin}/email-confirmed`
-        }
-      });
-      
-      if (error) {
-        console.error('Signup error:', error);
-        throw error;
-      }
-
-      console.log('Signup successful:', authData);
-
-      // Check if user was created or already exists
-      if (authData.user && !authData.user.email_confirmed_at) {
-        toast.success('Please check your email to verify your account');
-        navigate('/verify-email', { 
-          state: { 
-            email: data.email,
-            message: 'We sent you a verification email. Please check your inbox and click the link to activate your account.'
-          }
-        });
-      } else if (authData.user && authData.user.email_confirmed_at) {
-        toast.success('Account created successfully!');
-        navigate('/dashboard');
-      } else {
-        toast.success('Please check your email to verify your account');
-        navigate('/verify-email', { 
-          state: { 
-            email: data.email,
-            message: 'We sent you a verification email. Please check your inbox and click the link to activate your account.'
-          }
-        });
-      }
-      
-    } catch (error) {
-      console.error('Signup error:', error);
-      
-      // Handle specific error cases
-      if (error.message?.includes('User already registered')) {
-        toast.error('This email is already registered. Please try signing in instead.');
-      } else if (error.message?.includes('Invalid email')) {
-        toast.error('Please enter a valid email address.');
-      } else if (error.message?.includes('Password')) {
-        toast.error('Password must be at least 6 characters long.');
-      } else {
-        toast.error(error.message || 'An error occurred during registration');
-      }
-      
-      throw error;
-    }
-  };
-
   const signIn = async (data: { email: string; password: string }) => {
+    if (!isSupabaseConfigured()) {
+      const errorMessage = 'La conexión con Supabase no está configurada.';
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+    
     try {
-      if (!isSupabaseConfigured()) {
-        toast.error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
-        throw new Error('Supabase not configured');
-      }
-      console.log('Starting signin process for:', data.email);
-      
-      // Dismiss any existing login toast
-      toast.dismiss('login');
-      
-      // Show loading toast
-      toast.loading('Signing in...', { id: 'login' });
-      
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password
       });
-      
+
       if (error) {
-        console.error('Signin error:', error);
-        toast.dismiss('login');
-        
+        console.error('Error en el inicio de sesión de Supabase:', error);
+        let friendlyMessage = 'Credenciales inválidas. Por favor, inténtalo de nuevo.';
         if (error.message.includes('Email not confirmed')) {
-          toast.error('Please verify your email address before signing in');
+          friendlyMessage = 'Tu correo no está verificado. Por favor, revisa tu bandeja de entrada.';
           navigate('/verify-email', { 
             state: { 
               email: data.email,
-              message: 'Your email address is not verified. Please check your inbox for the verification email.'
+              message: 'Tu correo no está verificado. Por favor, revisa tu bandeja de entrada.'
             }
           });
-          return;
-        } else if (error.message.includes('Invalid login credentials')) {
-          toast.error('Invalid email or password. Please try again.');
-        } else {
-          toast.error(error.message);
         }
-        throw error;
+        toast.error(friendlyMessage);
+        throw new Error(friendlyMessage);
       }
-
-      console.log('Signin successful:', authData);
-      toast.success('Signed in successfully!', { id: 'login' });
-
-      // Set a simple session cookie to indicate login status
-      if (authData.session) {
-        document.cookie = 'veroma_session=active; path=/; SameSite=Lax';
-      }
-
-      // Navigation is handled in the auth state change listener
+      
     } catch (error) {
-      console.error('Signin error:', error);
-      toast.dismiss('login');
-      toast.error('Login failed. Please check your credentials and try again.');
+      console.error('Error en la función signIn:', error);
       throw error;
     }
   };
-
-  const resetPassword = async (email: string) => {
+  
+  const signUp = async (data: {email: string; password: string; options?: { data: Record<string, unknown> };}) => {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      
-      if (error) throw error;
-      
-      toast.success('Password reset instructions sent to your email');
-      navigate('/login');
-    } catch (error) {
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
-  const updatePassword = async (newPassword: string) => {
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
-
-      if (error) throw error;
-      
-      toast.success('Password updated successfully. Please sign in with your new password.');
-      await signOut();
-    } catch (error) {
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
-  const updateProfile = async (data: { name?: string; country?: string }) => {
-    try {
-      if (!user) throw new Error('No authenticated user');
-
-      const { error } = await supabase
-        .from('profiles')
-        .update(data)
-        .eq('id', user.id);
-
-      if (error) throw error;
-      
-      toast.success('Profile updated successfully');
-    } catch (error) {
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
-  const resendVerificationEmail = async (email?: string) => {
-    try {
-      // Use provided email or current user's email
-      const targetEmail = email || user?.email;
-      
-      if (!targetEmail) {
-        throw new Error('No email address found. Please try signing up again.');
-      }
-
-      console.log('Resending verification email to:', targetEmail);
-
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: targetEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}/email-confirmed`
+        if (!isSupabaseConfigured()) {
+            toast.error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+            throw new Error('Supabase not configured');
         }
-      });
-
-      if (error) {
-        console.error('Error resending:', error);
+        const { data: authData, error } = await supabase.auth.signUp({
+            email: data.email,
+            password: data.password,
+            options: {
+                data: data.options?.data,
+                emailRedirectTo: `${window.location.origin}/email-confirmed`
+            }
+        });
+        if (error) throw error;
+        if (authData.user) {
+            toast.success('Please check your email to verify your account');
+            navigate('/verify-email', { 
+                state: { 
+                    email: data.email,
+                    message: 'We sent you a verification email. Please check your inbox and click the link to activate your account.'
+                }
+            });
+        }
+    } catch (error: any) {
+        console.error('Signup error:', error);
+        toast.error(error.message || 'An error occurred during registration');
         throw error;
-      }
-      
-      toast.success('Verification email sent successfully');
-    } catch (error) {
-      console.error('Error in resendVerificationEmail:', error);
-      toast.error(error.message || 'Error sending verification email');
-      throw error;
-    }
-  };
-
-  const checkEmailVerification = async () => {
-    try {
-      // Refresh the session to get the latest user data
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (error) throw error;
-      
-      if (session?.user?.email_confirmed_at) {
-        // Sync with profiles table
-        await syncEmailVerification(session.user);
-        setEmailVerified(true);
-        setUser(session.user);
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error('Error checking email verification:', error);
-      throw error;
     }
   };
 
   const signOut = async () => {
     try {
-      console.log('Starting sign out process');
-      
-      // Sign out from Supabase
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Sign out error from Supabase:', error);
-        // Continue with cleanup even if there's an error
-      }
-      
-      // Clear local state
-      setUser(null);
-      setEmailVerified(false);
-      setRole(null);
-      
-      // Clear any cached data
-      localStorage.removeItem('veroma-auth-token');
-      localStorage.removeItem('supabase.auth.token');
-
-      // Remove login cookie
-      document.cookie = 'veroma_session=; Max-Age=0; path=/; SameSite=Lax';
-      
-      toast.success('Signed out successfully');
-      
-      // Force redirect to home page
-      window.location.href = '/';
-      
-      return Promise.resolve();
-    } catch (error) {
-      console.error('Error during sign out:', error);
-      
-      // Force cleanup even if there's an error
-      setUser(null);
-      setEmailVerified(false);
-      setRole(null);
-      localStorage.removeItem('veroma-auth-token');
-      localStorage.removeItem('supabase.auth.token');
-      
-      toast.error('Error signing out, but you have been logged out');
-      window.location.href = '/';
-      
-      return Promise.reject(error);
+        await supabase.auth.signOut();
+        setUser(null);
+        setEmailVerified(false);
+        setRole(null);
+        document.cookie = 'veroma_session=; Max-Age=0; path=/; SameSite=Lax';
+        toast.success('Signed out successfully');
+        window.location.href = '/';
+    } catch (error: any) {
+        console.error('Error during sign out:', error);
+        toast.error('Error signing out, but you have been logged out');
+        window.location.href = '/';
+        throw error;
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast.success('Password reset instructions sent to your email');
+        navigate('/login');
+    } catch (error: any) {
+        toast.error(error.message);
+        throw error;
+    }
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    try {
+        const { error } = await supabase.auth.updateUser({
+            password: newPassword
+        });
+        if (error) throw error;
+        toast.success('Password updated successfully. Please sign in with your new password.');
+        await signOut();
+    } catch (error: any) {
+        toast.error(error.message);
+        throw error;
+    }
+  };
+
+  const updateProfile = async (data: { name?: string; country?: string }) => {
+    try {
+        if (!user) throw new Error('No authenticated user');
+        const { error } = await supabase
+            .from('profiles')
+            .update(data)
+            .eq('id', user.id);
+        if (error) throw error;
+        toast.success('Profile updated successfully');
+    } catch (error: any) {
+        toast.error(error.message);
+        throw error;
+    }
+  };
+
+  const resendVerificationEmail = async (email?: string) => {
+    try {
+        const targetEmail = email || user?.email;
+        if (!targetEmail) {
+            throw new Error('No email address found.');
+        }
+        const { error } = await supabase.auth.resend({
+            type: 'signup',
+            email: targetEmail,
+            options: {
+                emailRedirectTo: `${window.location.origin}/email-confirmed`
+            }
+        });
+        if (error) throw error;
+        toast.success('Verification email sent successfully');
+    } catch (error: any) {
+        console.error('Error in resendVerificationEmail:', error);
+        toast.error(error.message || 'Error sending verification email');
+        throw error;
+    }
+  };
+
+  const checkEmailVerification = async () => {
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (session?.user?.email_confirmed_at) {
+            await syncEmailVerification(session.user);
+            setEmailVerified(true);
+            setUser(session.user);
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error checking email verification:', error);
+        throw error;
+    }
+  };
+  
   return (
     <AuthContext.Provider value={{ 
       user,
