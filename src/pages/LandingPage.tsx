@@ -101,13 +101,9 @@ export default function LandingPage() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-2xl"></div>
                 <img 
-                  src="/veroma.png" 
+                  src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
                   alt="Veroma Platform" 
                   className="rounded-2xl shadow-2xl w-full"
-                  onError={(e) => {
-                    const img = e.target as HTMLImageElement;
-                    img.src = 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
-                  }}
                 />
               </div>
             </motion.div>

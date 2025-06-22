@@ -4,7 +4,8 @@ import {
   supabase,
   checkUserProfileExists,
   createProfileIfNeeded,
-  isSupabaseConfigured
+  isSupabaseConfigured,
+  syncEmailConfirmation
 } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -71,13 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (isVerifiedInAuth) {
         try {
-          const { error: syncError } = await supabase.rpc('sync_user_email_confirmation', {
-            user_id: currentUser.id
-          });
-
-          if (syncError) {
-            console.error('Error syncing email confirmation:', syncError);
-          }
+          await syncEmailConfirmation(currentUser.id);
         } catch (syncErr) {
           console.error('Error calling sync function:', syncErr);
         }
@@ -190,15 +185,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               const r = await fetchUserRole(session.user.id);
               setRole(r);
             }
-            toast.success('¡Bienvenido de nuevo!');
+            toast.success('Welcome back!');
             navigate('/dashboard');
           } else {
             setEmailVerified(false);
-            toast.error('Por favor, verifica tu correo electrónico para continuar');
+            toast.error('Please verify your email address to continue');
             navigate('/verify-email', {
               state: {
                 email: session?.user?.email,
-                message: 'Por favor, verifica tu correo para acceder a todas las funciones.'
+                message: 'Please verify your email to access all features.'
               }
             });
           }
@@ -220,8 +215,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (data: { email: string; password: string }) => {
     if (!isSupabaseConfigured()) {
-      const errorMessage = 'La conexión con Supabase no está configurada.';
-      toast.error('Supabase connection is not configured.');
+      const errorMessage = 'Supabase connection is not configured.';
+      toast.error(errorMessage);
       throw new Error(errorMessage);
     }
     
@@ -261,6 +256,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             toast.error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
             throw new Error('Supabase not configured');
         }
+        toast.loading('Creating your account...', { id: 'signup' });
         const { data: authData, error } = await supabase.auth.signUp({
             email: data.email,
             password: data.password,
@@ -271,7 +267,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         if (error) throw error;
         if (authData.user) {
-            toast.success('Please check your email to verify your account');
+            toast.success('Please check your email to verify your account', { id: 'signup' });
             navigate('/verify-email', { 
                 state: { 
                     email: data.email,
@@ -281,7 +277,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     } catch (error: any) {
         console.error('Signup error:', error);
-        toast.error(error.message || 'An error occurred during registration');
+        toast.error(error.message || 'An error occurred during registration', { id: 'signup' });
         throw error;
     }
   };

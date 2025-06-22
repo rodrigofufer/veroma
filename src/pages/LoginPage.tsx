@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../utils/supabaseClient';
+import { isSupabaseConfigured } from '../utils/supabaseClient';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -43,9 +43,6 @@ export default function LoginPage() {
       
       // Navigation is handled in the auth state change listener
     } catch (err) {
-      console.error('Login error:', err);
-      toast.dismiss('login');
-      setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Login error:', err);
       toast.dismiss('login');
       setError(err instanceof Error ? err.message : 'An error occurred');

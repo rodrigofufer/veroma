@@ -161,7 +161,7 @@ export default function Header() {
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                       } ${
                         (label === 'Admin Panel') ? 'border border-red-200' :
-                        (label === 'Official Proposal') ? 'border border-purple-200' : ''
+                        (label === 'Official Proposal') ? 'border border-purple-200 hover:border-purple-300' : ''
                       }`}
                     >
                       <Icon className="h-5 w-5 mr-3" />

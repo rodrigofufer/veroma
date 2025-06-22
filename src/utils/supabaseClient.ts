@@ -37,16 +37,38 @@ const createMockClient = () => {
     signOut: () => Promise.resolve({ error: null }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
     resetPasswordForEmail: () => Promise.resolve({ data: {}, error: { message: 'Supabase not configured' } }),
-    updateUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Supabase not configured' } })
+    updateUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Supabase not configured' } }),
+    refreshSession: () => Promise.resolve({ data: { session: null }, error: { message: 'Supabase not configured' } }),
+    resend: () => Promise.resolve({ data: {}, error: { message: 'Supabase not configured' } }),
+    verifyOtp: () => Promise.resolve({ data: { session: null, user: null }, error: { message: 'Supabase not configured' } })
   };
-  const mockFrom = () => ({
-    select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }) }),
-    insert: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-    update: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) }),
-    delete: () => ({ eq: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }) })
+  
+  const mockFrom = (table: string) => ({
+    select: (columns?: string) => ({
+      eq: (column: string, value: any) => ({
+        single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+        maybeSingle: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+        order: () => ({
+          limit: () => Promise.resolve({ data: [], error: { message: 'Supabase not configured' } })
+        })
+      })
+    }),
+    insert: (values: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    update: (values: any) => ({
+      eq: (column: string, value: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } })
+    }),
+    delete: () => ({
+      eq: (column: string, value: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } })
+    })
   });
-  const mockRpc = () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
-  return { auth: mockAuth, from: mockFrom, rpc: mockRpc };
+  
+  const mockRpc = (fn: string, params?: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
+  
+  return { 
+    auth: mockAuth, 
+    from: mockFrom,
+    rpc: mockRpc
+  };
 };
 
 export const supabase = (() => {
@@ -54,7 +76,7 @@ export const supabase = (() => {
     console.warn(
       `Missing Supabase environment variables. Using mock client. Please check your .env file.`
     );
-    return createMockClient();
+    return createMockClient() as any;
   }
   return createClient(supabaseUrl, supabaseAnonKey);
 })();
@@ -100,5 +122,41 @@ export const createProfileIfNeeded = async (userId: string, userData: any): Prom
   } catch (error) {
     console.error('Error in createProfileIfNeeded:', error);
     return false;
+  }
+};
+
+// Function to sync email confirmation status
+export const syncEmailConfirmation = async (userId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase.rpc('sync_user_email_confirmation', {
+      user_id: userId
+    });
+    
+    if (error) {
+      console.error('Error syncing email confirmation:', error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error in syncEmailConfirmation:', error);
+    return false;
+  }
+};
+
+// Function to get public stats
+export const fetchPublicStats = async () => {
+  try {
+    const { data, error } = await supabase.rpc('get_public_stats');
+    
+    if (error) {
+      console.error('Error fetching public stats:', error);
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error in fetchPublicStats:', error);
+    return null;
   }
 };
