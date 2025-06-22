@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader } from 'lucide-react';
-import { isSupabaseConfigured } from '../utils/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../utils/supabaseClient';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -27,8 +27,8 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!supabaseConfigured) {
-      setError('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+      setError('Supabase is not configured. Please check the .env file.');
+      toast.error('Server configuration error.');
       return;
     }
 
@@ -36,11 +36,15 @@ export default function LoginPage() {
     setError(null);
 
     try {
+      toast.loading('Signing in...', { id: 'login' });
       console.log('Attempting to sign in with email:', email);
       await signIn({ email, password });
-
+      
       // Navigation is handled in the auth state change listener
     } catch (err) {
+      console.error('Login error:', err);
+      toast.dismiss('login');
+      setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Login error:', err);
       toast.dismiss('login');
       setError(err instanceof Error ? err.message : 'An error occurred');

@@ -1,189 +1,334 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowRight, Globe, Vote, Users, CheckCircle, MapPin, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader } from 'lucide-react';
-import { isSupabaseConfigured } from '../utils/supabaseClient';
-import toast from 'react-hot-toast';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import BoltBadge from '../components/BoltBadge';
 
-export default function LoginPage() {
+export default function LandingPage() {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [stats, setStats] = useState({
+    countries: 0,
+    ideas: 0,
+    users: 0
+  });
 
-  // Verificación explícita de la configuración de Supabase.
-  const supabaseConfigured = isSupabaseConfigured();
-
-  // Redirigir si el usuario ya está logueado
   useEffect(() => {
+    // Redirect to dashboard if already logged in
     if (user) {
       navigate('/dashboard');
     }
+
+    // Fetch public stats
+    const fetchStats = async () => {
+      try {
+        // In a real app, you would fetch these from an API
+        setStats({
+          countries: 45,
+          ideas: 1250,
+          users: 3800
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+
+    fetchStats();
   }, [user, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Guarda para no intentar el login si Supabase no está configurado.
-    if (!supabaseConfigured) {
-      setError('La conexión con la base de datos no está configurada. Por favor, revisa el archivo .env.');
-      toast.error('Error de configuración del servidor.');
-      return;
+  const features = [
+    {
+      icon: Vote,
+      title: "Weekly Voting System",
+      description: "10 votes per week to support the ideas that matter most to you"
+    },
+    {
+      icon: Globe,
+      title: "Global Reach",
+      description: "From your neighborhood to the entire world, your voice matters"
+    },
+    {
+      icon: Users,
+      title: "Community Driven",
+      description: "Join thousands of citizens committed to positive change"
     }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // El error que viene de AuthContext se establece directamente en el estado de error de esta página.
-      await signIn({ email, password });
-      // La navegación en caso de éxito se maneja en AuthContext
-    } catch (err: any) {
-      setError(err.message || 'Ocurrió un error inesperado durante el inicio de sesión.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="text-center">
-          <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver al inicio
-          </Link>
-        </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Inicia sesión en tu cuenta
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          O{' '}
-          <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
-            crea una nueva cuenta
-          </Link>
-        </p>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {/* Este bloque se mostrará si las variables de entorno no están presentes. */}
-          {!supabaseConfigured && (
-            <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-              <div className="flex items-center">
-                <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0" />
-                <div>
-                  <div className="font-medium">Base de Datos No Configurada</div>
-                  <div className="mt-1 text-xs">
-                    Por favor, configura tus variables de entorno de Supabase en el archivo .env:
-                    <br />• VITE_SUPABASE_URL
-                    <br />• VITE_SUPABASE_ANON_KEY
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* El bloque de error ahora es más genérico para mostrar cualquier tipo de error. */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Correo electrónico
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Contraseña
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-blue-900 to-indigo-800 text-white">
+        <Header />
+        
+        <div className="max-w-7xl mx-auto px-4 py-20 md:py-32">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                Your Voice, From Local to Global
+              </h1>
+              <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
+                Veroma empowers citizens to raise their concerns, share ideas, and vote on proposals that impact their communities and the world.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/signup"
+                  className="px-8 py-3 bg-white text-blue-900 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end">
-              <div className="text-sm">
-                <Link to="/reset-password" className="font-medium text-blue-600 hover:text-blue-500">
-                  ¿Olvidaste tu contraseña?
+                  Get Started
+                </Link>
+                <Link
+                  to="/login"
+                  className="px-8 py-3 bg-blue-800 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors border border-blue-700"
+                >
+                  Sign In
                 </Link>
               </div>
-            </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="hidden md:block"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-2xl"></div>
+                <img 
+                  src="/veroma.png" 
+                  alt="Veroma Platform" 
+                  className="rounded-2xl shadow-2xl w-full"
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    img.src = 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+                  }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading || !supabaseConfigured}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      {/* Stats Section */}
+      <div className="bg-white py-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-center"
+            >
+              <div className="text-4xl font-bold text-blue-800 mb-2">{stats.countries}+</div>
+              <div className="text-gray-600">Countries</div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-center"
+            >
+              <div className="text-4xl font-bold text-blue-800 mb-2">{stats.ideas}+</div>
+              <div className="text-gray-600">Ideas Shared</div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-center"
+            >
+              <div className="text-4xl font-bold text-blue-800 mb-2">{stats.users}+</div>
+              <div className="text-gray-600">Active Users</div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="bg-gray-50 py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              How Veroma Works
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              A simple yet powerful platform for civic engagement at any scale
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-12">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 * (index + 1) }}
+                className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow"
               >
-                {loading ? (
-                  <span className="flex items-center">
-                    <Loader className="animate-spin h-4 w-4 mr-2" />
-                    Iniciando sesión...
-                  </span>
-                ) : 'Iniciar sesión'}
-              </button>
-            </div>
-          </form>
+                <div className="flex justify-center mb-6">
+                  <div className="p-4 bg-blue-100 rounded-full">
+                    <feature.icon className="h-8 w-8 text-blue-800" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 text-center">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">¿Necesitas ayuda?</span>
-              </div>
-            </div>
+      {/* How It Works Section */}
+      <div className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              From Idea to Impact
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              See how your participation creates real change
+            </p>
+          </motion.div>
 
-            <div className="mt-6 text-center">
-              <Link to="/contact" className="text-sm font-medium text-blue-600 hover:text-blue-500">
-                Contactar a soporte
-              </Link>
+          <div className="relative">
+            {/* Connecting Line */}
+            <div className="absolute left-12 top-0 bottom-0 w-1 bg-blue-100 hidden md:block"></div>
+            
+            <div className="space-y-16">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex flex-col md:flex-row gap-8"
+              >
+                <div className="md:w-24 flex-shrink-0 flex md:justify-center">
+                  <div className="relative flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-800 z-10">
+                    <MapPin className="h-6 w-6" />
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Share Your Idea</h3>
+                  <p className="text-lg text-gray-600 mb-4">
+                    Post a proposal, complaint, or vote about any issue in your community or beyond.
+                  </p>
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                      <p className="text-gray-700">
+                        Choose your location level - from neighborhood to global
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col md:flex-row gap-8"
+              >
+                <div className="md:w-24 flex-shrink-0 flex md:justify-center">
+                  <div className="relative flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-800 z-10">
+                    <Vote className="h-6 w-6" />
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Gather Support</h3>
+                  <p className="text-lg text-gray-600 mb-4">
+                    Community members vote on ideas, with the most popular rising to the top.
+                  </p>
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                      <p className="text-gray-700">
+                        Each user gets 10 votes per week to ensure fair participation
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col md:flex-row gap-8"
+              >
+                <div className="md:w-24 flex-shrink-0 flex md:justify-center">
+                  <div className="relative flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-800 z-10">
+                    <Calendar className="h-6 w-6" />
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Track Progress</h3>
+                  <p className="text-lg text-gray-600 mb-4">
+                    Follow the journey of your idea from proposal to implementation.
+                  </p>
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                      <p className="text-gray-700">
+                        Official proposals have voting deadlines and priority status
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* CTA Section */}
+      <div className="bg-gradient-to-br from-blue-900 to-indigo-800 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to Make a Difference?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              Join thousands of citizens who are already creating positive change in their communities and beyond.
+            </p>
+            <Link
+              to="/signup"
+              className="inline-flex items-center px-8 py-4 bg-white text-blue-900 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg"
+            >
+              Join Veroma Today
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+
+      <Footer />
+      <BoltBadge />
     </div>
   );
 }

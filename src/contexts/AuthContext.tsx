@@ -221,34 +221,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (data: { email: string; password: string }) => {
     if (!isSupabaseConfigured()) {
       const errorMessage = 'La conexión con Supabase no está configurada.';
-      toast.error(errorMessage);
+      toast.error('Supabase connection is not configured.');
       throw new Error(errorMessage);
     }
     
     try {
+      toast.loading('Signing in...', { id: 'auth-signin' });
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password
       });
 
       if (error) {
-        console.error('Error en el inicio de sesión de Supabase:', error);
-        let friendlyMessage = 'Credenciales inválidas. Por favor, inténtalo de nuevo.';
+        console.error('Error in Supabase login:', error);
+        toast.dismiss('auth-signin');
+        let friendlyMessage = 'Invalid credentials. Please try again.';
         if (error.message.includes('Email not confirmed')) {
-          friendlyMessage = 'Tu correo no está verificado. Por favor, revisa tu bandeja de entrada.';
+          friendlyMessage = 'Your email is not verified. Please check your inbox.';
           navigate('/verify-email', { 
             state: { 
               email: data.email,
-              message: 'Tu correo no está verificado. Por favor, revisa tu bandeja de entrada.'
+              message: 'Your email is not verified. Please check your inbox.'
             }
           });
         }
         toast.error(friendlyMessage);
         throw new Error(friendlyMessage);
       }
-      
+      toast.success('Signed in successfully!', { id: 'auth-signin' });
     } catch (error) {
-      console.error('Error en la función signIn:', error);
+      console.error('Error in signIn function:', error);
       throw error;
     }
   };

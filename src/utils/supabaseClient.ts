@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 
-// Carga las variables de entorno en Node.js
+// Load environment variables in Node.js
 if (typeof process !== 'undefined' && process.env) {
   dotenv.config();
 }
@@ -19,18 +19,16 @@ const getEnvVar = (key: string): string => {
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
 const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
-// --- INICIO DE CAMBIO PARA DEPURACIÓN ---
-// Vamos a imprimir las variables en la consola para asegurarnos de que se están cargando.
-console.log("Supabase URL Cargada:", supabaseUrl);
-console.log("Supabase Anon Key Cargada:", supabaseAnonKey ? "Sí, la clave está presente." : "No, la clave está FALTANDO.");
-// --- FIN DE CAMBIO PARA DEPURACIÓN ---
+// Debug logging to verify environment variables
+console.log("Supabase URL Loaded:", supabaseUrl);
+console.log("Supabase Anon Key Loaded:", supabaseAnonKey ? "Yes, key is present." : "No, key is MISSING.");
 
 export const isSupabaseConfigured = (): boolean => {
   return Boolean(supabaseUrl && supabaseAnonKey);
 };
 
 const createMockClient = () => {
-  // ... (el resto de la función se mantiene igual)
+  // Mock client for when Supabase is not configured
   const mockAuth = {
     getSession: () => Promise.resolve({ data: { session: null }, error: null }),
     getUser: () => Promise.resolve({ data: { user: null }, error: null }),
@@ -54,17 +52,53 @@ const createMockClient = () => {
 export const supabase = (() => {
   if (!supabaseUrl || !supabaseAnonKey) {
     console.warn(
-      `Missing Supabase environment variables. Using mock client.`
+      `Missing Supabase environment variables. Using mock client. Please check your .env file.`
     );
     return createMockClient();
   }
-  return createClient(supabaseUrl, supabaseAnonKey, { /* ... el resto de la configuración ... */ });
+  return createClient(supabaseUrl, supabaseAnonKey);
 })();
 
-// (El resto del archivo se mantiene igual)
-export const getEmailSettings = () => { /* ... */ };
-export const handleAuthError = (error: any) => { /* ... */ };
-export const recoverSession = async () => { /* ... */ };
-export const fetchPublicStats = async () => { /* ... */ };
-export const checkUserProfileExists = async (userId: string): Promise<boolean> => { /* ... */ };
-export const createProfileIfNeeded = async (userId: string, userData: any): Promise<boolean> => { /* ... */ };
+// Helper functions
+export const checkUserProfileExists = async (userId: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error checking profile:', error);
+      return false;
+    }
+    
+    return !!data;
+  } catch (error) {
+    console.error('Error in checkUserProfileExists:', error);
+    return false;
+  }
+};
+
+export const createProfileIfNeeded = async (userId: string, userData: any): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .insert([{
+        id: userId,
+        email: userData.email,
+        name: userData.name || 'User',
+        country: userData.country || 'Unknown'
+      }]);
+    
+    if (error) {
+      console.error('Error creating profile:', error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error in createProfileIfNeeded:', error);
+    return false;
+  }
+};
