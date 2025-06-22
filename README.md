@@ -1,89 +1,89 @@
-# 🌍 Veroma – Plataforma Cívica Internacional
+# 🌍 Veroma – International Civic Platform
 
-**Veroma** es una plataforma cívica multilingüe que permite a cualquier persona, en cualquier lugar, plantear problemas cívicos, enviar propuestas y votar — desde barrios locales hasta movimientos globales.
+**Veroma** is a multilingual civic platform that enables anyone, anywhere to raise civic issues, submit proposals, and vote — from local neighborhoods to global movements.
 
-> Construida durante el Hackathon de Devpost, Veroma ya es funcional, escalable y lista para generar impacto.
-
----
-
-## ✨ Características (Versión Actual)
-
-- 🗳️ Sistema de votación semanal: 10 votos por usuario, reinicio cada lunes
-- ✍️ Publicación de ideas anónima o pública
-- 🌐 Selección predictiva de países (insensible a acentos)
-- 📱 Diseño totalmente responsive (móvil + escritorio)
-- 🌎 Interfaz en inglés (soporte multilingüe con Lingo próximamente)
-- 🍪 Cookie de sesión simple para mantener tu sesión activa
-- 👥 Roles de usuario: ciudadano, representante, administrador
-- 🏛️ Propuestas oficiales con plazos de votación
+> Built during the Devpost Hackathon, Veroma is already functional, scalable, and ready for impact.
 
 ---
 
-## 🚧 Próximamente
+## ✨ Features (Current Version)
 
-- 🛡️ Verificación segura de identidad (compatible con blockchain)  
-- 🗺️ Votación por niveles según ubicación (local → ciudad → nacional → global)  
-- 🌍 Internacionalización completa (más de 85 idiomas vía Lingo)  
-- 🚨 Sistema de reportes y moderación  
-- 🧪 Lanzamiento piloto en regiones seleccionadas  
+  - 🗳️ Weekly voting system: 10 votes per user, reset every Monday
+  - ✍️ Anonymous or public idea submission
+  - 🌐 Predictive country selection (accent-insensitive)
+  - 📱 Fully responsive design (mobile + desktop)
+  - 🌎 English UI (multilingual support with Lingo coming soon)
+  - 🍪 Simple session cookie to keep you logged in
+  - 👥 User roles: citizen, representative, administrator
+  - 🏛️ Official proposals with voting deadlines
 
 ---
 
-## 🧠 Stack Tecnológico
+## 🚧 Coming Soon
 
-- React con TypeScript  
-- Tailwind CSS  
-- Supabase (Auth + Base de datos)  
-- Framer Motion (animación UI)  
-- Netlify (Despliegue)  
-- Bolt.new (lógica UI / constructor)  
-- Lingo (motor de traducción – próximamente)  
+  - 🛡️ Secure identity verification (blockchain-compatible)  
+  - 🗺️ Tiered voting by location (local → city → national → global)  
+  - 🌍 Full internationalization (85+ languages via Lingo)  
+  - 🚨 Reporting and moderation system  
+  - 🧪 Real-world pilot launch in selected regions  
 
-## 🛠 Desarrollo Local
+---
 
-1. Copia `.env.example` a `.env` y añade tus credenciales de Supabase:
+## 🧠 Tech Stack
+
+  - React with TypeScript  
+  - Tailwind CSS  
+  - Supabase (Auth + Database)  
+  - Framer Motion (UI animation)  
+  - Netlify (Deployment)  
+  - Bolt.new (UI logic / builder)  
+  - Lingo (Translation engine – coming soon)  
+
+## 🛠 Local Development
+
+1. Copy `.env.example` to `.env` and add your Supabase credentials:
    ```
-   VITE_SUPABASE_URL=<tu-url-de-supabase>
-   VITE_SUPABASE_ANON_KEY=<tu-clave-anon-de-supabase>
+   VITE_SUPABASE_URL=<your-supabase-url>
+   VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
    ```
-   Si el botón de inicio de sesión se queda en **"Iniciando sesión..."**, es probable que estas variables de entorno falten o sean incorrectas.
-2. Instala las dependencias:
+   If the login button stays on **"Signing in..."**, these environment variables are likely missing or incorrect.
+2. Install dependencies:
    ```
    npm install
    ```
-3. Inicia el servidor de desarrollo:
+3. Start the development server:
    ```
    npm run dev
    ```
 
 ---
 
-## 💡 ¿Por qué Veroma?
+## 💡 Why Veroma?
 
-La mayoría de las plataformas cívicas están limitadas por geografía, burocracia o política. Veroma es diferente. Fue construida para ser:
+Most civic platforms are constrained by geography, bureaucracy, or politics. Veroma is different. It was built to be:
 
-- 🌐 Sin fronteras  
-- 🗳️ Democrática  
-- 👥 Inclusiva  
-- 💬 Impulsada por la comunidad  
+  - 🌐 Borderless  
+  - 🗳️ Democratic  
+  - 👥 Inclusive  
+  - 💬 Community-driven  
 
-Ya sea arreglar una farola rota o proponer una resolución global sobre el clima — cada voz importa.
+Whether it's fixing a broken streetlight or proposing a global climate resolution — every voice matters.
 
 ---
 
 ## 🍪 Cookies
 
-Veroma utiliza una cookie ligera llamada `veroma_session` para mantener tu sesión activa después de autenticarte. Esta cookie no contiene datos personales y expira cuando cierras sesión.
+Veroma uses a lightweight cookie called `veroma_session` to keep you logged in after you authenticate. This cookie contains no personal data and expires when you sign out.
 
 ---
 
-## 📜 Cumplimiento del Hackathon
+## 📜 Hackathon Compliance
 
-- ✅ Construido completamente durante el período oficial del Hackathon de Devpost  
-- ✅ Todo el código, texto y recursos son originales o tienen licencia comercial  
-- ✅ El nombre *Veroma* es un nombre en clave provisional para desarrollo  
-- ✅ El participante conserva todos los derechos de propiedad intelectual; Devpost recibe una licencia no exclusiva para exhibición  
+  - ✅ Built entirely during the official Devpost Hackathon period  
+  - ✅ All code, text, and assets are original or commercially licensed  
+  - ✅ The name *Veroma* is a provisional development codename  
+  - ✅ Participant retains all IP rights; Devpost receives a non-exclusive license for display  
 
 ---
 
-**Veroma** no es solo un prototipo — es el comienzo de una revolución cívica escalable.
+**Veroma** is not just a prototype — it's the beginning of a scalable civic revolution.

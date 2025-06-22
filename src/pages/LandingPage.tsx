@@ -27,29 +27,29 @@ import toast from 'react-hot-toast';
 
 // Environment impact stats
 const impactStats = [
-  { value: "42M", label: "toneladas CO2 reducidas" },
-  { value: "64%", label: "menos consumo energético" },
-  { value: "87%", label: "clientes renovaron servicio" },
-  { value: "120+", label: "proyectos implementados" }
+  { value: "42M", label: "tons of CO2 reduced" },
+  { value: "64%", label: "less energy consumption" },
+  { value: "87%", label: "client retention rate" },
+  { value: "120+", label: "projects implemented" }
 ];
 
 // Testimonials data
 const testimonials = [
   {
-    quote: "EcoTech transformó completamente nuestra huella de carbono empresarial. Sus soluciones innovadoras redujeron nuestro consumo energético en un 47% el primer año.",
-    author: "María Rodríguez",
-    position: "Directora de Sostenibilidad",
+    quote: "EcoTech completely transformed our corporate carbon footprint. Their innovative solutions reduced our energy consumption by 47% in the first year.",
+    author: "Maria Rodriguez",
+    position: "Sustainability Director",
     company: "GreenCorp Industries"
   },
   {
-    quote: "La implementación de sensores inteligentes de EcoTech nos permitió optimizar nuestros procesos de manufactura mientras reducimos desperdicios en un 38%.",
-    author: "Carlos Méndez",
-    position: "Director de Operaciones",
+    quote: "The implementation of EcoTech's smart sensors allowed us to optimize our manufacturing processes while reducing waste by 38%.",
+    author: "Carlos Mendez",
+    position: "Operations Director",
     company: "TechSolutions Global"
   },
   {
-    quote: "Su plataforma de análisis de datos ambientales nos ayudó a identificar oportunidades de mejora que nunca hubiéramos visto. El ROI superó nuestras expectativas.",
-    author: "Ana Martínez",
+    quote: "Their environmental data analysis platform helped us identify improvement opportunities we would never have seen. The ROI exceeded our expectations.",
+    author: "Ana Martinez",
     position: "CEO",
     company: "Innovatech"
   }
@@ -58,46 +58,46 @@ const testimonials = [
 // Blog posts
 const blogPosts = [
   {
-    title: "La IA al servicio del planeta: Nuevas aplicaciones para monitoreo ambiental",
-    excerpt: "Descubre cómo la inteligencia artificial está revolucionando la forma en que monitoreamos y protegemos nuestros recursos naturales.",
+    title: "AI in Service of the Planet: New Applications for Environmental Monitoring",
+    excerpt: "Discover how artificial intelligence is revolutionizing the way we monitor and protect our natural resources.",
     image: "https://images.pexels.com/photos/7108/notebook-computer-chill-relax.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Innovación"
+    category: "Innovation"
   },
   {
-    title: "Microrredes solares: El futuro de la energía en zonas rurales",
-    excerpt: "Las microrredes solares están transformando comunidades rurales alrededor del mundo, brindando acceso a energía limpia y sostenible.",
+    title: "Solar Microgrids: The Future of Energy in Rural Areas",
+    excerpt: "Solar microgrids are transforming rural communities around the world, providing access to clean and sustainable energy.",
     image: "https://images.pexels.com/photos/356036/pexels-photo-356036.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Energía"
+    category: "Energy"
   },
   {
-    title: "Blockchain para certificación de cadenas de suministro sostenibles",
-    excerpt: "La tecnología blockchain está creando nuevas posibilidades para verificar y certificar prácticas sostenibles en cadenas de suministro globales.",
+    title: "Blockchain for Certification of Sustainable Supply Chains",
+    excerpt: "Blockchain technology is creating new possibilities for verifying and certifying sustainable practices in global supply chains.",
     image: "https://images.pexels.com/photos/8853512/pexels-photo-8853512.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Tecnología"
+    category: "Technology"
   }
 ];
 
 // FAQ items
 const faqItems = [
   {
-    question: "¿Cómo pueden sus soluciones reducir nuestra huella de carbono?",
-    answer: "Nuestras soluciones combinan tecnologías de IoT, IA y análisis de datos para optimizar el consumo energético, reducir desperdicios y mejorar la eficiencia operativa. Típicamente, nuestros clientes ven una reducción del 30-60% en su huella de carbono dentro del primer año de implementación."
+    question: "How can your solutions reduce our carbon footprint?",
+    answer: "Our solutions combine IoT technologies, AI, and data analysis to optimize energy consumption, reduce waste, and improve operational efficiency. Typically, our clients see a 30-60% reduction in their carbon footprint within the first year of implementation."
   },
   {
-    question: "¿Qué sectores pueden beneficiarse de su tecnología?",
-    answer: "Nuestras soluciones son adaptables a múltiples sectores, incluyendo manufactura, agricultura, construcción, energía, transporte y gestión urbana. Personalizamos cada implementación según las necesidades específicas de cada industria y cliente."
+    question: "Which sectors can benefit from your technology?",
+    answer: "Our solutions are adaptable to multiple sectors, including manufacturing, agriculture, construction, energy, transportation, and urban management. We customize each implementation according to the specific needs of each industry and client."
   },
   {
-    question: "¿Cuánto tiempo toma implementar sus soluciones?",
-    answer: "El tiempo de implementación varía según la escala y complejidad del proyecto. Para soluciones básicas, podemos completar la implementación en 2-4 semanas. Proyectos más complejos pueden tomar entre 2-6 meses. Ofrecemos una evaluación inicial gratuita para proporcionarle un cronograma personalizado."
+    question: "How long does it take to implement your solutions?",
+    answer: "Implementation time varies according to the scale and complexity of the project. For basic solutions, we can complete implementation in 2-4 weeks. More complex projects can take between 2-6 months. We offer a free initial assessment to provide you with a personalized timeline."
   },
   {
-    question: "¿Cómo miden y verifican el impacto ambiental?",
-    answer: "Utilizamos una combinación de sensores IoT de alta precisión, algoritmos de análisis avanzados y estándares de medición internacionales (como GHG Protocol e ISO 14064). Todos los datos se verifican por terceros independientes y proporcionamos informes detallados con métricas transparentes y verificables."
+    question: "How do you measure and verify environmental impact?",
+    answer: "We use a combination of high-precision IoT sensors, advanced analysis algorithms, and international measurement standards (such as GHG Protocol and ISO 14064). All data is verified by independent third parties, and we provide detailed reports with transparent and verifiable metrics."
   },
   {
-    question: "¿Ofrecen servicios de consultoría además de tecnología?",
-    answer: "Sí, además de nuestras soluciones tecnológicas, ofrecemos servicios completos de consultoría en sostenibilidad, incluyendo evaluación de impacto ambiental, desarrollo de estrategias ESG, capacitación, y certificación en estándares internacionales."
+    question: "Do you offer consulting services in addition to technology?",
+    answer: "Yes, in addition to our technological solutions, we offer comprehensive sustainability consulting services, including environmental impact assessment, ESG strategy development, training, and certification in international standards."
   }
 ];
 
@@ -152,7 +152,7 @@ export default function LandingPage() {
       // Simulate form submission
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      toast.success('Mensaje enviado correctamente. Nos pondremos en contacto pronto.');
+      toast.success('Message sent successfully. We will contact you soon.');
       
       // Reset form
       setContactForm({
@@ -162,7 +162,7 @@ export default function LandingPage() {
         message: ''
       });
     } catch (error) {
-      toast.error('Error al enviar el mensaje. Por favor intente nuevamente.');
+      toast.error('Error sending message. Please try again.');
       console.error('Form submission error:', error);
     } finally {
       setFormSubmitting(false);
@@ -202,16 +202,16 @@ export default function LandingPage() {
               <div className="inline-block mb-3 bg-green-800 bg-opacity-50 px-4 py-1 rounded-full">
                 <div className="flex items-center">
                   <Leaf className="h-4 w-4 mr-2 text-green-300" />
-                  <span className="text-sm font-medium text-green-200">Tecnología Sostenible</span>
+                  <span className="text-sm font-medium text-green-200">Sustainable Technology</span>
                 </div>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Innovación tecnológica <span className="text-green-300">para un planeta sostenible</span>
+                Technological innovation <span className="text-green-300">for a sustainable planet</span>
               </h1>
               
               <p className="text-xl md:text-2xl text-green-100 mb-8 leading-relaxed">
-                Transformamos la forma en que las empresas interactúan con el medio ambiente a través de soluciones tecnológicas inteligentes y sostenibles.
+                We transform the way companies interact with the environment through intelligent and sustainable technological solutions.
               </p>
               
               <div className="flex flex-wrap gap-4">
@@ -219,7 +219,7 @@ export default function LandingPage() {
                   to="/signup"
                   className="px-8 py-3 bg-white text-green-800 rounded-lg font-semibold text-lg hover:bg-green-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center"
                 >
-                  Comenzar Ahora
+                  Get Started Now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
                 
@@ -227,7 +227,7 @@ export default function LandingPage() {
                   to="/login"
                   className="px-8 py-3 bg-green-800 text-white rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors border border-green-700 flex items-center"
                 >
-                  Iniciar Sesión
+                  Sign In
                 </Link>
               </div>
               
@@ -251,7 +251,7 @@ export default function LandingPage() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-sm text-green-200">Más de <span className="font-bold">400+</span> empresas confían en nosotros</p>
+                  <p className="text-sm text-green-200">More than <span className="font-bold">400+</span> companies trust us</p>
                 </div>
               </div>
             </motion.div>
@@ -274,11 +274,11 @@ export default function LandingPage() {
                   <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20">
                     <div className="flex items-center mb-2">
                       <div className="h-3 w-3 rounded-full bg-green-400 mr-2"></div>
-                      <span className="text-white font-medium">Impacto en tiempo real</span>
+                      <span className="text-white font-medium">Real-time Impact</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-white/70">Emisiones reducidas</p>
+                        <p className="text-sm text-white/70">Emissions reduced</p>
                         <p className="text-2xl font-bold text-white">2.4M tonCO₂</p>
                       </div>
                       <div className="h-16 w-24">
@@ -301,7 +301,7 @@ export default function LandingPage() {
       <section className="py-10 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-8">
-            <p className="text-gray-500 text-sm font-medium">EMPRESAS QUE CONFÍAN EN NOSOTROS</p>
+            <p className="text-gray-500 text-sm font-medium">COMPANIES THAT TRUST US</p>
           </div>
           
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
@@ -333,10 +333,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Impacto Ambiental Medible
+              Measurable Environmental Impact
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Nuestras soluciones tecnológicas generan resultados cuantificables para el planeta y para su negocio
+              Our technological solutions generate quantifiable results for the planet and for your business
             </p>
           </motion.div>
 
@@ -372,15 +372,15 @@ export default function LandingPage() {
             <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
                 <LightbulbIcon className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Nuestras Soluciones</span>
+                <span className="text-sm font-medium text-green-800">Our Solutions</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Tecnologías Sostenibles para el Futuro
+              Sustainable Technologies for the Future
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Combinamos hardware inteligente, software avanzado y análisis de datos para crear soluciones integrales de sostenibilidad
+              We combine smart hardware, advanced software, and data analysis to create comprehensive sustainability solutions
             </p>
           </motion.div>
 
@@ -394,16 +394,16 @@ export default function LandingPage() {
               <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
                 <Wind className="h-8 w-8 text-green-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Energía Inteligente</h3>
-              <p className="text-gray-600 mb-4">Sistemas de gestión energética que optimizan consumo y maximizan el uso de fuentes renovables.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Smart Energy</h3>
+              <p className="text-gray-600 mb-4">Energy management systems that optimize consumption and maximize the use of renewable sources.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Monitoreo en tiempo real</span>
+                  <span className="text-gray-700">Real-time monitoring</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Algoritmos predictivos</span>
+                  <span className="text-gray-700">Predictive algorithms</span>
                 </li>
               </ul>
             </motion.div>
@@ -417,16 +417,16 @@ export default function LandingPage() {
               <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
                 <Droplets className="h-8 w-8 text-green-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Gestión Hídrica</h3>
-              <p className="text-gray-600 mb-4">Soluciones inteligentes para monitorear, conservar y optimizar el uso de recursos hídricos.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Water Management</h3>
+              <p className="text-gray-600 mb-4">Smart solutions to monitor, conserve, and optimize the use of water resources.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Sensores avanzados IoT</span>
+                  <span className="text-gray-700">Advanced IoT sensors</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Detección temprana de fugas</span>
+                  <span className="text-gray-700">Early leak detection</span>
                 </li>
               </ul>
             </motion.div>
@@ -440,16 +440,16 @@ export default function LandingPage() {
               <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
                 <BarChart className="h-8 w-8 text-green-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Análisis ESG</h3>
-              <p className="text-gray-600 mb-4">Plataformas para medir, reportar y verificar métricas ambientales, sociales y de gobernanza.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">ESG Analysis</h3>
+              <p className="text-gray-600 mb-4">Platforms to measure, report, and verify environmental, social, and governance metrics.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Reportes automatizados</span>
+                  <span className="text-gray-700">Automated reporting</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Validación blockchain</span>
+                  <span className="text-gray-700">Blockchain validation</span>
                 </li>
               </ul>
             </motion.div>
@@ -463,16 +463,16 @@ export default function LandingPage() {
               <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
                 <Sun className="h-8 w-8 text-green-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Energía Solar+</h3>
-              <p className="text-gray-600 mb-4">Sistemas avanzados de generación y almacenamiento de energía solar con tecnología de aprendizaje adaptativo.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Solar Energy+</h3>
+              <p className="text-gray-600 mb-4">Advanced solar energy generation and storage systems with adaptive learning technology.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Algoritmos de optimización</span>
+                  <span className="text-gray-700">Optimization algorithms</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Almacenamiento inteligente</span>
+                  <span className="text-gray-700">Smart storage</span>
                 </li>
               </ul>
             </motion.div>
@@ -488,7 +488,7 @@ export default function LandingPage() {
               to="/contact"
               className="inline-flex items-center px-6 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-800 transition-colors shadow-md"
             >
-              Explora Todas Nuestras Soluciones
+              Explore All Our Solutions
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </motion.div>
@@ -507,15 +507,15 @@ export default function LandingPage() {
             <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
                 <Building2 className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Casos de Éxito</span>
+                <span className="text-sm font-medium text-green-800">Success Stories</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Transformando Empresas, Protegiendo el Planeta
+              Transforming Companies, Protecting the Planet
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Descubre cómo nuestras soluciones tecnológicas están generando impacto real
+              Discover how our technological solutions are creating real impact
             </p>
           </motion.div>
 
@@ -537,7 +537,7 @@ export default function LandingPage() {
               animate={testimonialsInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.3 }}
             >
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Eco Transformación en GreenCorp Industries</h3>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Eco Transformation at GreenCorp Industries</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start">
@@ -545,8 +545,8 @@ export default function LandingPage() {
                     <CheckCircle className="h-6 w-6 text-green-700" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">El Desafío</h4>
-                    <p className="text-gray-600">GreenCorp buscaba reducir su huella de carbono mientras mejoraba la eficiencia operativa en sus 12 plantas manufactureras.</p>
+                    <h4 className="text-lg font-medium text-gray-800">The Challenge</h4>
+                    <p className="text-gray-600">GreenCorp was looking to reduce their carbon footprint while improving operational efficiency in their 12 manufacturing plants.</p>
                   </div>
                 </div>
 
@@ -555,8 +555,8 @@ export default function LandingPage() {
                     <CheckCircle className="h-6 w-6 text-green-700" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">La Solución</h4>
-                    <p className="text-gray-600">Implementamos nuestro sistema EcoSmart® con más de 2,500 sensores IoT y nuestra plataforma de análisis predictivo.</p>
+                    <h4 className="text-lg font-medium text-gray-800">The Solution</h4>
+                    <p className="text-gray-600">We implemented our EcoSmart® system with over 2,500 IoT sensors and our predictive analysis platform.</p>
                   </div>
                 </div>
 
@@ -565,8 +565,8 @@ export default function LandingPage() {
                     <CheckCircle className="h-6 w-6 text-green-700" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">Los Resultados</h4>
-                    <p className="text-gray-600">47% reducción en consumo energético, 32% menos emisiones y ahorros de $4.2M en el primer año.</p>
+                    <h4 className="text-lg font-medium text-gray-800">The Results</h4>
+                    <p className="text-gray-600">47% reduction in energy consumption, 32% less emissions, and savings of $4.2M in the first year.</p>
                   </div>
                 </div>
 
@@ -575,7 +575,7 @@ export default function LandingPage() {
                     to="/case-studies"
                     className="inline-flex items-center text-green-700 hover:text-green-800 font-medium"
                   >
-                    Leer caso completo
+                    Read full case study
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </div>
@@ -598,10 +598,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Lo Que Dicen Nuestros Clientes
+              What Our Clients Say
             </h2>
             <p className="text-xl text-green-100 max-w-3xl mx-auto">
-              Empresas que están liderando el cambio hacia un futuro sostenible
+              Companies that are leading the change towards a sustainable future
             </p>
           </motion.div>
 
@@ -673,15 +673,15 @@ export default function LandingPage() {
             <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
                 <Globe className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Blog EcoTech</span>
+                <span className="text-sm font-medium text-green-800">EcoTech Blog</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Últimas Tendencias en Tecnología Verde
+              Latest Trends in Green Technology
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Explora nuestros análisis y perspectivas sobre innovación sostenible
+              Explore our analysis and perspectives on sustainable innovation
             </p>
           </motion.div>
 
@@ -718,7 +718,7 @@ export default function LandingPage() {
                     to="/blog"
                     className="inline-flex items-center text-green-700 hover:text-green-800 font-medium"
                   >
-                    Leer más
+                    Read more
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </div>
@@ -736,7 +736,7 @@ export default function LandingPage() {
               to="/blog"
               className="inline-flex items-center px-6 py-3 bg-white text-green-700 rounded-lg font-medium hover:bg-green-50 border border-green-200 transition-colors shadow-sm"
             >
-              Ver Todos los Artículos
+              View All Articles
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </motion.div>
@@ -755,15 +755,15 @@ export default function LandingPage() {
             <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
                 <Users className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Preguntas Frecuentes</span>
+                <span className="text-sm font-medium text-green-800">Frequently Asked Questions</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Respondemos a tus Dudas
+              We Answer Your Questions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Todo lo que necesitas saber sobre nuestras soluciones tecnológicas
+              Everything you need to know about our technological solutions
             </p>
           </motion.div>
 
@@ -824,16 +824,16 @@ export default function LandingPage() {
               <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
                 <div className="flex items-center">
                   <Mail className="h-4 w-4 mr-2 text-green-600" />
-                  <span className="text-sm font-medium text-green-800">Contáctanos</span>
+                  <span className="text-sm font-medium text-green-800">Contact Us</span>
                 </div>
               </div>
               
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Inicia Tu Transformación Sostenible
+                Start Your Sustainable Transformation
               </h2>
               
               <p className="text-xl text-gray-600 mb-8">
-                Estamos aquí para ayudarte a implementar soluciones tecnológicas que beneficien tanto a tu negocio como al planeta.
+                We're here to help you implement technological solutions that benefit both your business and the planet.
               </p>
               
               <div className="space-y-6">
@@ -843,7 +843,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600">contacto@ecotech.com</p>
+                    <p className="text-gray-600">contact@ecotech.com</p>
                   </div>
                 </div>
                 
@@ -852,8 +852,8 @@ export default function LandingPage() {
                     <Phone className="h-6 w-6 text-green-700" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">Teléfono</h3>
-                    <p className="text-gray-600">+34 91 123 4567</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">Phone</h3>
+                    <p className="text-gray-600">+1 (555) 123-4567</p>
                   </div>
                 </div>
                 
@@ -862,8 +862,8 @@ export default function LandingPage() {
                     <MapPin className="h-6 w-6 text-green-700" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">Oficina</h3>
-                    <p className="text-gray-600">Calle Tecnología Verde 123, Madrid</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">Office</h3>
+                    <p className="text-gray-600">123 Green Technology St, San Francisco</p>
                   </div>
                 </div>
               </div>
@@ -871,14 +871,14 @@ export default function LandingPage() {
               <div className="mt-8">
                 <div className="h-[300px] bg-white rounded-xl shadow-md overflow-hidden">
                   <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d194347.38440305288!2d-3.819623!3d40.4381311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422997800a3c81%3A0xc436dec1618c2269!2sMadrid!5e0!3m2!1ses!2ses!4v1676911291199!5m2!1ses!2ses" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d50470.67784421391!2d-122.431416!3d37.773972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1676911291199!5m2!1sen!2sus" 
                     width="100%" 
                     height="100%" 
                     style={{ border: 0 }} 
                     allowFullScreen 
                     loading="lazy" 
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Ubicación de la oficina"
+                    title="Office location"
                   ></iframe>
                 </div>
               </div>
@@ -890,12 +890,12 @@ export default function LandingPage() {
               transition={{ duration: 0.7, delay: 0.2 }}
             >
               <div className="bg-white p-8 rounded-xl shadow-lg border border-green-100">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-6">Solicita Información</h3>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-6">Request Information</h3>
                 
                 <form onSubmit={handleContactSubmit} className="space-y-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre Completo*
+                      Full Name*
                     </label>
                     <input
                       id="name"
@@ -904,13 +904,13 @@ export default function LandingPage() {
                       value={contactForm.name}
                       onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      placeholder="Tu nombre"
+                      placeholder="Your name"
                     />
                   </div>
                   
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Corporativo*
+                      Corporate Email*
                     </label>
                     <input
                       id="email"
@@ -919,13 +919,13 @@ export default function LandingPage() {
                       value={contactForm.email}
                       onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      placeholder="tucorreo@empresa.com"
+                      placeholder="youremail@company.com"
                     />
                   </div>
                   
                   <div>
                     <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-                      Empresa
+                      Company
                     </label>
                     <input
                       id="company"
@@ -933,13 +933,13 @@ export default function LandingPage() {
                       value={contactForm.company}
                       onChange={(e) => setContactForm({...contactForm, company: e.target.value})}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      placeholder="Nombre de tu empresa"
+                      placeholder="Your company name"
                     />
                   </div>
                   
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Mensaje*
+                      Message*
                     </label>
                     <textarea
                       id="message"
@@ -948,7 +948,7 @@ export default function LandingPage() {
                       onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
                       rows={4}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                      placeholder="¿Cómo podemos ayudarte?"
+                      placeholder="How can we help you?"
                     />
                   </div>
                   
@@ -960,7 +960,7 @@ export default function LandingPage() {
                       className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded mt-1"
                     />
                     <label htmlFor="privacy" className="ml-2 block text-sm text-gray-600">
-                      Acepto la <Link to="/privacy" className="text-green-700 hover:text-green-800">Política de Privacidad</Link> y el procesamiento de mis datos personales.
+                      I accept the <Link to="/privacy" className="text-green-700 hover:text-green-800">Privacy Policy</Link> and the processing of my personal data.
                     </label>
                   </div>
                   
@@ -975,15 +975,15 @@ export default function LandingPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Enviando...
+                        Sending...
                       </>
                     ) : (
-                      'Enviar Mensaje'
+                      'Send Message'
                     )}
                   </button>
 
                   <p className="text-xs text-gray-500 text-center">
-                    Respondemos a todas las consultas en menos de 24 horas laborables.
+                    We respond to all inquiries within 24 business hours.
                   </p>
                 </form>
               </div>
@@ -1001,21 +1001,21 @@ export default function LandingPage() {
             transition={{ duration: 0.7 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Comienza Tu Viaje Hacia la Sostenibilidad
+              Begin Your Journey Towards Sustainability
             </h2>
             <p className="text-xl text-green-100 mb-8 max-w-3xl mx-auto">
-              Únete a cientos de empresas que ya están transformando sus operaciones con tecnología sostenible
+              Join hundreds of companies that are already transforming their operations with sustainable technology
             </p>
             <Link
               to="/signup"
               className="inline-flex items-center px-8 py-4 bg-white text-green-800 rounded-lg font-semibold text-lg hover:bg-green-50 transition-colors shadow-lg"
             >
-              Comenzar Ahora
+              Get Started Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             
             <p className="mt-6 text-green-200">
-              ¿Ya tienes cuenta? <Link to="/login" className="text-white underline hover:text-green-100">Inicia sesión</Link>
+              Already have an account? <Link to="/login" className="text-white underline hover:text-green-100">Sign in</Link>
             </p>
           </motion.div>
         </div>
