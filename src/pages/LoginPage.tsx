@@ -35,17 +35,20 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
+    toast.loading('Signing in...', { id: 'login' });
+
     try {
       console.log('Attempting to sign in with email:', email);
       await signIn({ email, password });
-      
-      // Show loading toast while auth state updates
-      toast.loading('Signing in...', { id: 'login' });
-      
+
+      toast.success('Signed in successfully!', { id: 'login' });
       // Navigation is handled in the auth state change listener
     } catch (err) {
       console.error('Login error:', err);
-      toast.dismiss('login');
+      toast.error(
+        err instanceof Error ? err.message : 'An error occurred',
+        { id: 'login' }
+      );
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
