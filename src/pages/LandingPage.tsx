@@ -3,21 +3,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { 
   ArrowRight, 
-  Leaf, 
+  Vote,
   LineChart, 
   Globe, 
-  BarChart, 
-  Wind, 
-  Droplets, 
-  Sun, 
-  LightbulbIcon, 
-  Building2, 
+  BarChart,
+  MessageSquare,
+  Building2,
   Users,
+  Map,
   CheckCircle,
   ChevronDown,
   Mail,
-  Phone,
-  MapPin
+  Shield,
+  MapPin,
+  Calendar
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/Header';
@@ -25,79 +24,82 @@ import Footer from '../components/Footer';
 import BoltBadge from '../components/BoltBadge';
 import toast from 'react-hot-toast';
 
-// Environment impact stats
+// Impact stats for the platform
 const impactStats = [
-  { value: "42M", label: "tons of CO2 reduced" },
-  { value: "64%", label: "less energy consumption" },
-  { value: "87%", label: "client retention rate" },
-  { value: "120+", label: "projects implemented" }
+  { value: "10K+", label: "active citizens" },
+  { value: "25K+", label: "ideas shared" },
+  { value: "96+", label: "countries represented" },
+  { value: "120K+", label: "votes cast" }
 ];
 
 // Testimonials data
 const testimonials = [
   {
-    quote: "EcoTech completely transformed our corporate carbon footprint. Their innovative solutions reduced our energy consumption by 47% in the first year.",
+    quote: "Veroma gave our community a powerful voice in local development decisions. Our neighborhood improvement proposal gained enough traction to be implemented by the city council.",
     author: "Maria Rodriguez",
-    position: "Sustainability Director",
-    company: "GreenCorp Industries"
+    position: "Community Organizer",
+    city: "Madrid"
   },
   {
-    quote: "The implementation of EcoTech's smart sensors allowed us to optimize our manufacturing processes while reducing waste by 38%.",
+    quote: "As a representative, Veroma helps me understand what matters most to citizens. The platform's voting system provides clear data on priorities and helps us allocate resources accordingly.",
     author: "Carlos Mendez",
-    position: "Operations Director",
-    company: "TechSolutions Global"
+    position: "City Council Representative",
+    city: "Mexico City"
   },
   {
-    quote: "Their environmental data analysis platform helped us identify improvement opportunities we would never have seen. The ROI exceeded our expectations.",
+    quote: "I was able to report a safety issue in my neighborhood anonymously, which was important to me. Within weeks, the problem was addressed by local authorities thanks to community support.",
     author: "Ana Martinez",
-    position: "CEO",
-    company: "Innovatech"
+    position: "Citizen",
+    city: "Buenos Aires"
   }
 ];
 
-// Blog posts
-const blogPosts = [
+// Featured ideas
+const featuredIdeas = [
   {
-    title: "AI in Service of the Planet: New Applications for Environmental Monitoring",
-    excerpt: "Discover how artificial intelligence is revolutionizing the way we monitor and protect our natural resources.",
-    image: "https://images.pexels.com/photos/7108/notebook-computer-chill-relax.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Innovation"
+    title: "Urban Green Spaces Initiative",
+    excerpt: "A proposal to transform unused urban spaces into community gardens and mini-parks for environmental and social benefits.",
+    image: "https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    category: "Environment",
+    votes: 342
   },
   {
-    title: "Solar Microgrids: The Future of Energy in Rural Areas",
-    excerpt: "Solar microgrids are transforming rural communities around the world, providing access to clean and sustainable energy.",
-    image: "https://images.pexels.com/photos/356036/pexels-photo-356036.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Energy"
+    title: "Neighborhood Safety Improvement Plan",
+    excerpt: "Implementing better street lighting and community watch programs to enhance safety in residential areas.",
+    image: "https://images.pexels.com/photos/775219/pexels-photo-775219.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    category: "Security",
+    votes: 287
   },
   {
-    title: "Blockchain for Certification of Sustainable Supply Chains",
-    excerpt: "Blockchain technology is creating new possibilities for verifying and certifying sustainable practices in global supply chains.",
-    image: "https://images.pexels.com/photos/8853512/pexels-photo-8853512.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Technology"
+    title: "Public Transportation Expansion Proposal",
+    excerpt: "Extending public transportation routes to underserved communities and increasing frequency during peak hours.",
+    image: "https://images.pexels.com/photos/2132795/pexels-photo-2132795.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    category: "Transportation",
+    votes: 203
   }
 ];
 
 // FAQ items
 const faqItems = [
   {
-    question: "How can your solutions reduce our carbon footprint?",
-    answer: "Our solutions combine IoT technologies, AI, and data analysis to optimize energy consumption, reduce waste, and improve operational efficiency. Typically, our clients see a 30-60% reduction in their carbon footprint within the first year of implementation."
+    question: "How does the voting system work?",
+    answer: "Each user receives 10 votes per week, which reset every Monday. You can use your votes to support ideas that matter to you or oppose ones you disagree with. This weekly limit ensures fair participation and prevents vote manipulation."
   },
   {
-    question: "Which sectors can benefit from your technology?",
-    answer: "Our solutions are adaptable to multiple sectors, including manufacturing, agriculture, construction, energy, transportation, and urban management. We customize each implementation according to the specific needs of each industry and client."
+    question: "Can I submit ideas anonymously?",
+    answer: "Yes, you have the option to submit ideas anonymously. Your identity will remain hidden from other users, though platform administrators can still access this information for moderation purposes if necessary."
   },
   {
-    question: "How long does it take to implement your solutions?",
-    answer: "Implementation time varies according to the scale and complexity of the project. For basic solutions, we can complete implementation in 2-4 weeks. More complex projects can take between 2-6 months. We offer a free initial assessment to provide you with a personalized timeline."
+    question: "What happens to the most popular ideas?",
+    answer: "Popular ideas gain visibility on the platform and may be highlighted to relevant decision-makers. For official proposals submitted by representatives, voting results can directly influence policy decisions depending on the jurisdiction."
   },
   {
-    question: "How do you measure and verify environmental impact?",
-    answer: "We use a combination of high-precision IoT sensors, advanced analysis algorithms, and international measurement standards (such as GHG Protocol and ISO 14064). All data is verified by independent third parties, and we provide detailed reports with transparent and verifiable metrics."
+    question: "How do I become a verified Representative?",
+    answer: "Government officials and authorized representatives can request the Representative role by contacting our support team with official credentials. After verification, you'll be able to create Official Proposals with special visibility and voting features."
   },
   {
-    question: "Do you offer consulting services in addition to technology?",
-    answer: "Yes, in addition to our technological solutions, we offer comprehensive sustainability consulting services, including environmental impact assessment, ESG strategy development, training, and certification in international standards."
+    question: "Is Veroma available in my country?",
+    answer: "Veroma is a global platform available in any country. The platform will show you ideas and proposals relevant to your selected location, from your local neighborhood to global initiatives."
   }
 ];
 
@@ -109,22 +111,21 @@ export default function LandingPage() {
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
-    company: '',
     message: ''
   });
   const [formSubmitting, setFormSubmitting] = useState(false);
 
   const heroRef = useRef(null);
   const statsRef = useRef(null);
-  const solutionsRef = useRef(null);
+  const featuresRef = useRef(null);
   const testimonialsRef = useRef(null);
-  const blogRef = useRef(null);
+  const ideasRef = useRef(null);
   const contactRef = useRef(null);
 
   const statsInView = useInView(statsRef, { once: true, amount: 0.3 });
-  const solutionsInView = useInView(solutionsRef, { once: true, amount: 0.2 });
+  const featuresInView = useInView(featuresRef, { once: true, amount: 0.2 });
   const testimonialsInView = useInView(testimonialsRef, { once: true, amount: 0.4 });
-  const blogInView = useInView(blogRef, { once: true, amount: 0.3 });
+  const ideasInView = useInView(ideasRef, { once: true, amount: 0.3 });
   const contactInView = useInView(contactRef, { once: true, amount: 0.3 });
 
   const { scrollYProgress } = useScroll();
@@ -158,7 +159,6 @@ export default function LandingPage() {
       setContactForm({
         name: '',
         email: '',
-        company: '',
         message: ''
       });
     } catch (error) {
@@ -180,7 +180,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section 
         ref={heroRef}
-        className="relative bg-gradient-to-br from-green-900 to-emerald-700 text-white pt-20 overflow-hidden"
+        className="relative bg-gradient-to-br from-blue-800 to-indigo-900 text-white pt-20 overflow-hidden"
       >
         {/* Parallax Background Elements */}
         <motion.div 
@@ -199,33 +199,33 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="inline-block mb-3 bg-green-800 bg-opacity-50 px-4 py-1 rounded-full">
+              <div className="inline-block mb-3 bg-blue-700 bg-opacity-50 px-4 py-1 rounded-full">
                 <div className="flex items-center">
-                  <Leaf className="h-4 w-4 mr-2 text-green-300" />
-                  <span className="text-sm font-medium text-green-200">Sustainable Technology</span>
+                  <Globe className="h-4 w-4 mr-2 text-blue-300" />
+                  <span className="text-sm font-medium text-blue-200">Global Civic Platform</span>
                 </div>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Technological innovation <span className="text-green-300">for a sustainable planet</span>
+                Your Voice, <span className="text-blue-300">From Local to Global</span>
               </h1>
               
-              <p className="text-xl md:text-2xl text-green-100 mb-8 leading-relaxed">
-                We transform the way companies interact with the environment through intelligent and sustainable technological solutions.
+              <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
+                Veroma empowers citizens to raise their concerns, share ideas, and vote on proposals that impact their communities and the world.
               </p>
               
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/signup"
-                  className="px-8 py-3 bg-white text-green-800 rounded-lg font-semibold text-lg hover:bg-green-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center"
+                  className="px-8 py-3 bg-white text-blue-800 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center"
                 >
-                  Get Started Now
+                  Get Started
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
                 
                 <Link
                   to="/login"
-                  className="px-8 py-3 bg-green-800 text-white rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors border border-green-700 flex items-center"
+                  className="px-8 py-3 bg-blue-700 text-white rounded-lg font-semibold text-lg hover:bg-blue-600 transition-colors border border-blue-600 flex items-center"
                 >
                   Sign In
                 </Link>
@@ -234,10 +234,10 @@ export default function LandingPage() {
               <div className="mt-12 flex items-center">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className={`w-10 h-10 rounded-full border-2 border-green-700 bg-green-${i * 100} flex items-center justify-center overflow-hidden`}>
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-blue-700 bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center overflow-hidden">
                       <img 
-                        src={`https://randomuser.me/api/portraits/men/${i + 20}.jpg`}
-                        alt="Client"
+                        src={`https://randomuser.me/api/portraits/${i % 2 === 0 ? 'women' : 'men'}/${i + 20}.jpg`}
+                        alt="User"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -251,7 +251,7 @@ export default function LandingPage() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-sm text-green-200">More than <span className="font-bold">400+</span> companies trust us</p>
+                  <p className="text-sm text-blue-200">More than <span className="font-bold">200+</span> communities participating</p>
                 </div>
               </div>
             </motion.div>
@@ -264,32 +264,32 @@ export default function LandingPage() {
             >
               <div className="relative rounded-xl overflow-hidden shadow-2xl border-4 border-white/20">
                 <img 
-                  src="https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
-                  alt="Sustainable Technology" 
+                  src="https://images.pexels.com/photos/6150432/pexels-photo-6150432.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                  alt="Community Participation" 
                   className="w-full h-[500px] object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-green-900/70 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/70 to-transparent"></div>
                 
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20">
                     <div className="flex items-center mb-2">
-                      <div className="h-3 w-3 rounded-full bg-green-400 mr-2"></div>
-                      <span className="text-white font-medium">Real-time Impact</span>
+                      <div className="h-3 w-3 rounded-full bg-blue-400 mr-2"></div>
+                      <span className="text-white font-medium">Live Voting Data</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-white/70">Emissions reduced</p>
-                        <p className="text-2xl font-bold text-white">2.4M tonCO₂</p>
+                        <p className="text-sm text-white/70">Weekly Participation</p>
+                        <p className="text-2xl font-bold text-white">1.4K votes</p>
                       </div>
                       <div className="h-16 w-24">
-                        <LineChart className="h-full w-full text-green-300" />
+                        <LineChart className="h-full w-full text-blue-300" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-br from-green-500 to-emerald-400 rounded-3xl -rotate-12 z-[-1] opacity-50 blur-xl"></div>
+              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-br from-blue-500 to-indigo-400 rounded-3xl -rotate-12 z-[-1] opacity-50 blur-xl"></div>
             </motion.div>
           </div>
           
@@ -297,23 +297,23 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Logos Section */}
+      {/* Featured Locations Section */}
       <section className="py-10 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-8">
-            <p className="text-gray-500 text-sm font-medium">COMPANIES THAT TRUST US</p>
+            <p className="text-gray-500 text-sm font-medium">ACTIVE COMMUNITIES WORLDWIDE</p>
           </div>
           
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-            {['Microsoft', 'Coca-Cola', 'Tesla', 'Amazon', 'Google'].map((company, index) => (
+            {['New York', 'London', 'Mexico City', 'Madrid', 'Tokyo', 'São Paulo'].map((city, index) => (
               <motion.div
-                key={company}
+                key={city}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-gray-400 font-bold text-xl"
+                className="text-gray-400 font-medium text-lg"
               >
-                {company}
+                {city}
               </motion.div>
             ))}
           </div>
@@ -333,10 +333,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Measurable Environmental Impact
+              Measurable Civic Impact
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our technological solutions generate quantifiable results for the planet and for your business
+              Join a growing movement of engaged citizens creating real change in their communities
             </p>
           </motion.div>
 
@@ -347,9 +347,9 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={statsInView ? { opacity: 1, y: 0, scale: 1 } : {}}
                 transition={{ duration: 0.5, delay: 0.1 * (index + 1) }}
-                className="bg-white p-6 rounded-xl shadow-md border border-green-100 text-center hover:shadow-lg transition-shadow"
+                className="bg-white p-6 rounded-xl shadow-md border border-blue-100 text-center hover:shadow-lg transition-shadow"
               >
-                <p className="text-4xl md:text-5xl font-bold text-green-700 mb-2">{stat.value}</p>
+                <p className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">{stat.value}</p>
                 <p className="text-gray-500 text-sm">{stat.label}</p>
               </motion.div>
             ))}
@@ -357,122 +357,122 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Solutions Section */}
+      {/* Features Section */}
       <section 
-        ref={solutionsRef}
-        className="py-20 bg-gradient-to-br from-green-50 to-emerald-50"
+        ref={featuresRef}
+        className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50"
       >
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={solutionsInView ? { opacity: 1, y: 0 } : {}}
+            animate={featuresInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
             className="text-center mb-16"
           >
-            <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
+            <div className="inline-block mb-3 bg-blue-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
-                <LightbulbIcon className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Our Solutions</span>
+                <Vote className="h-4 w-4 mr-2 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">Platform Features</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Sustainable Technologies for the Future
+              How Veroma Works
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We combine smart hardware, advanced software, and data analysis to create comprehensive sustainability solutions
+              A seamless civic engagement platform designed for maximum impact and accessibility
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={solutionsInView ? { opacity: 1, y: 0 } : {}}
+              animate={featuresInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-green-100 group hover:-translate-y-2"
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-blue-100 group hover:-translate-y-2"
             >
-              <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
-                <Wind className="h-8 w-8 text-green-700" />
+              <div className="p-4 bg-blue-100 rounded-full inline-block mb-4 group-hover:bg-blue-200 transition-colors">
+                <MessageSquare className="h-8 w-8 text-blue-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Smart Energy</h3>
-              <p className="text-gray-600 mb-4">Energy management systems that optimize consumption and maximize the use of renewable sources.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Share Ideas</h3>
+              <p className="text-gray-600 mb-4">Submit proposals, complaints, or start votes on issues that matter to your community.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Real-time monitoring</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Submit anonymously or publicly</span>
                 </li>
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Predictive algorithms</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Multiple categories and types</span>
                 </li>
               </ul>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={solutionsInView ? { opacity: 1, y: 0 } : {}}
+              animate={featuresInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-green-100 group hover:-translate-y-2"
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-blue-100 group hover:-translate-y-2"
             >
-              <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
-                <Droplets className="h-8 w-8 text-green-700" />
+              <div className="p-4 bg-blue-100 rounded-full inline-block mb-4 group-hover:bg-blue-200 transition-colors">
+                <Vote className="h-8 w-8 text-blue-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Water Management</h3>
-              <p className="text-gray-600 mb-4">Smart solutions to monitor, conserve, and optimize the use of water resources.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Weekly Votes</h3>
+              <p className="text-gray-600 mb-4">Every user receives 10 votes per week to support or oppose ideas that matter to them.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Advanced IoT sensors</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Votes reset every Monday</span>
                 </li>
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Early leak detection</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Equal voice for all participants</span>
                 </li>
               </ul>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={solutionsInView ? { opacity: 1, y: 0 } : {}}
+              animate={featuresInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-green-100 group hover:-translate-y-2"
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-blue-100 group hover:-translate-y-2"
             >
-              <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
-                <BarChart className="h-8 w-8 text-green-700" />
+              <div className="p-4 bg-blue-100 rounded-full inline-block mb-4 group-hover:bg-blue-200 transition-colors">
+                <Map className="h-8 w-8 text-blue-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">ESG Analysis</h3>
-              <p className="text-gray-600 mb-4">Platforms to measure, report, and verify environmental, social, and governance metrics.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Geo-Focused</h3>
+              <p className="text-gray-600 mb-4">View and filter content by location, from your neighborhood to global initiatives.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Automated reporting</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Multiple geographic levels</span>
                 </li>
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Blockchain validation</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Country-specific filtering</span>
                 </li>
               </ul>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={solutionsInView ? { opacity: 1, y: 0 } : {}}
+              animate={featuresInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-green-100 group hover:-translate-y-2"
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-blue-100 group hover:-translate-y-2"
             >
-              <div className="p-4 bg-green-100 rounded-full inline-block mb-4 group-hover:bg-green-200 transition-colors">
-                <Sun className="h-8 w-8 text-green-700" />
+              <div className="p-4 bg-blue-100 rounded-full inline-block mb-4 group-hover:bg-blue-200 transition-colors">
+                <Building2 className="h-8 w-8 text-blue-700" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Solar Energy+</h3>
-              <p className="text-gray-600 mb-4">Advanced solar energy generation and storage systems with adaptive learning technology.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Official Proposals</h3>
+              <p className="text-gray-600 mb-4">Verified representatives can create official proposals with voting deadlines and priority status.</p>
               <ul className="space-y-2">
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Optimization algorithms</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Transparent governance</span>
                 </li>
                 <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Smart storage</span>
+                  <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Direct citizen input</span>
                 </li>
               </ul>
             </motion.div>
@@ -480,22 +480,22 @@ export default function LandingPage() {
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={solutionsInView ? { opacity: 1, y: 0 } : {}}
+            animate={featuresInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.5 }}
             className="mt-16 text-center"
           >
             <Link
-              to="/contact"
-              className="inline-flex items-center px-6 py-3 bg-green-700 text-white rounded-lg font-medium hover:bg-green-800 transition-colors shadow-md"
+              to="/signup"
+              className="inline-flex items-center px-6 py-3 bg-blue-700 text-white rounded-lg font-medium hover:bg-blue-800 transition-colors shadow-md"
             >
-              Explore All Our Solutions
+              Join Veroma Today
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* Case Studies Section */}
+      {/* How It Works Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
@@ -504,18 +504,18 @@ export default function LandingPage() {
             transition={{ duration: 0.7 }}
             className="text-center mb-16"
           >
-            <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
+            <div className="inline-block mb-3 bg-blue-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
-                <Building2 className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Success Stories</span>
+                <Shield className="h-4 w-4 mr-2 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">Platform Workflow</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Transforming Companies, Protecting the Planet
+              From Ideas to Impact
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover how our technological solutions are creating real impact
+              How your participation translates into real-world change
             </p>
           </motion.div>
 
@@ -526,8 +526,8 @@ export default function LandingPage() {
               transition={{ duration: 0.7, delay: 0.2 }}
             >
               <img 
-                src="https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
-                alt="Smart Factory Implementation" 
+                src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                alt="Community Meeting" 
                 className="rounded-xl shadow-xl w-full h-[400px] object-cover"
               />
             </motion.div>
@@ -537,47 +537,47 @@ export default function LandingPage() {
               animate={testimonialsInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.3 }}
             >
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Eco Transformation at GreenCorp Industries</h3>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">The Path to Civic Change</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-full mt-1 mr-4">
-                    <CheckCircle className="h-6 w-6 text-green-700" />
+                  <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 text-blue-700 mt-1 mr-4">
+                    <span className="text-lg font-bold">1</span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">The Challenge</h4>
-                    <p className="text-gray-600">GreenCorp was looking to reduce their carbon footprint while improving operational efficiency in their 12 manufacturing plants.</p>
+                    <h4 className="text-lg font-medium text-gray-800">Submit an Idea</h4>
+                    <p className="text-gray-600">Share your proposals, raise concerns, or start a vote on issues that matter in your community, city, or worldwide.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-full mt-1 mr-4">
-                    <CheckCircle className="h-6 w-6 text-green-700" />
+                  <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 text-blue-700 mt-1 mr-4">
+                    <span className="text-lg font-bold">2</span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">The Solution</h4>
-                    <p className="text-gray-600">We implemented our EcoSmart® system with over 2,500 IoT sensors and our predictive analysis platform.</p>
+                    <h4 className="text-lg font-medium text-gray-800">Gather Support</h4>
+                    <p className="text-gray-600">Community members use their weekly votes to support ideas they believe in, creating a clear picture of priorities.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-full mt-1 mr-4">
-                    <CheckCircle className="h-6 w-6 text-green-700" />
+                  <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 text-blue-700 mt-1 mr-4">
+                    <span className="text-lg font-bold">3</span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">The Results</h4>
-                    <p className="text-gray-600">47% reduction in energy consumption, 32% less emissions, and savings of $4.2M in the first year.</p>
+                    <h4 className="text-lg font-medium text-gray-800">Reach Decision Makers</h4>
+                    <p className="text-gray-600">Popular ideas gain visibility to representatives and authorities who can implement real changes in policy and infrastructure.</p>
                   </div>
                 </div>
 
-                <div className="pt-4">
-                  <Link
-                    to="/case-studies"
-                    className="inline-flex items-center text-green-700 hover:text-green-800 font-medium"
-                  >
-                    Read full case study
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 text-blue-700 mt-1 mr-4">
+                    <span className="text-lg font-bold">4</span>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-800">Create Change</h4>
+                    <p className="text-gray-600">Track implementation progress as ideas transform into real-world actions and improvements in your community.</p>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -588,7 +588,7 @@ export default function LandingPage() {
       {/* Testimonials Section */}
       <section 
         ref={testimonialsRef}
-        className="py-20 bg-gradient-to-br from-green-900 to-emerald-800 text-white"
+        className="py-20 bg-gradient-to-br from-blue-900 to-indigo-800 text-white"
       >
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
@@ -598,10 +598,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              What Our Clients Say
+              Voices of Our Community
             </h2>
-            <p className="text-xl text-green-100 max-w-3xl mx-auto">
-              Companies that are leading the change towards a sustainable future
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+              Real stories from citizens making a difference through civic participation
             </p>
           </motion.div>
 
@@ -619,7 +619,7 @@ export default function LandingPage() {
                 className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 max-w-4xl mx-auto"
               >
                 <div className="mb-6">
-                  <svg className="h-12 w-12 text-green-300 opacity-60" fill="currentColor" viewBox="0 0 32 32">
+                  <svg className="h-12 w-12 text-blue-300 opacity-60" fill="currentColor" viewBox="0 0 32 32">
                     <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
                   </svg>
                 </div>
@@ -630,13 +630,13 @@ export default function LandingPage() {
                 
                 <div className="flex items-center">
                   <div className="mr-4">
-                    <div className="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-800 font-bold text-xl">
+                    <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center text-blue-800 font-bold text-xl">
                       {testimonial.author.charAt(0)}
                     </div>
                   </div>
                   <div>
                     <div className="font-medium text-white">{testimonial.author}</div>
-                    <div className="text-green-200 text-sm">{testimonial.position}, {testimonial.company}</div>
+                    <div className="text-blue-200 text-sm">{testimonial.position}, {testimonial.city}</div>
                   </div>
                 </div>
               </motion.div>
@@ -658,67 +658,73 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Blog Section */}
+      {/* Featured Ideas Section */}
       <section 
-        ref={blogRef}
+        ref={ideasRef}
         className="py-20 bg-gray-50"
       >
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={blogInView ? { opacity: 1, y: 0 } : {}}
+            animate={ideasInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
             className="text-center mb-16"
           >
-            <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
+            <div className="inline-block mb-3 bg-blue-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
-                <Globe className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">EcoTech Blog</span>
+                <MessageSquare className="h-4 w-4 mr-2 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">Featured Ideas</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Latest Trends in Green Technology
+              Trending Proposals
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Explore our analysis and perspectives on sustainable innovation
+              Discover popular ideas currently gathering support from communities worldwide
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {blogPosts.map((post, index) => (
+            {featuredIdeas.map((idea, index) => (
               <motion.div
-                key={post.title}
+                key={idea.title}
                 initial={{ opacity: 0, y: 20 }}
-                animate={blogInView ? { opacity: 1, y: 0 } : {}}
+                animate={ideasInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.1 * (index + 1) }}
                 className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
               >
                 <div className="relative h-48">
                   <img 
-                    src={post.image}
-                    alt={post.title}
+                    src={idea.image}
+                    alt={idea.title}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded">
-                      {post.category}
+                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded">
+                      {idea.category}
                     </span>
+                  </div>
+                  <div className="absolute bottom-4 right-4">
+                    <div className="flex items-center bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                      <Vote className="h-3.5 w-3.5 mr-1" />
+                      <span>{idea.votes} votes</span>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
-                    {post.title}
+                    {idea.title}
                   </h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">
-                    {post.excerpt}
+                    {idea.excerpt}
                   </p>
                   <Link
-                    to="/blog"
-                    className="inline-flex items-center text-green-700 hover:text-green-800 font-medium"
+                    to="/signup"
+                    className="inline-flex items-center text-blue-700 hover:text-blue-800 font-medium"
                   >
-                    Read more
+                    Support this idea
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </div>
@@ -728,15 +734,15 @@ export default function LandingPage() {
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={blogInView ? { opacity: 1, y: 0 } : {}}
+            animate={ideasInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.5 }}
             className="mt-16 text-center"
           >
             <Link
-              to="/blog"
-              className="inline-flex items-center px-6 py-3 bg-white text-green-700 rounded-lg font-medium hover:bg-green-50 border border-green-200 transition-colors shadow-sm"
+              to="/signup"
+              className="inline-flex items-center px-6 py-3 bg-white text-blue-700 rounded-lg font-medium hover:bg-blue-50 border border-blue-200 transition-colors shadow-sm"
             >
-              View All Articles
+              Explore All Ideas
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </motion.div>
@@ -752,18 +758,18 @@ export default function LandingPage() {
             transition={{ duration: 0.7 }}
             className="text-center mb-16"
           >
-            <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
+            <div className="inline-block mb-3 bg-blue-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
-                <Users className="h-4 w-4 mr-2 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Frequently Asked Questions</span>
+                <Users className="h-4 w-4 mr-2 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">Frequently Asked Questions</span>
               </div>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              We Answer Your Questions
+              Common Questions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Everything you need to know about our technological solutions
+              Everything you need to know about participating on Veroma
             </p>
           </motion.div>
 
@@ -777,7 +783,7 @@ export default function LandingPage() {
                   transition={{ duration: 0.5, delay: 0.1 * (index + 1) }}
                   className={`border ${
                     expandedFaq === index 
-                      ? 'border-green-200 bg-green-50' 
+                      ? 'border-blue-200 bg-blue-50' 
                       : 'border-gray-200 bg-white'
                   } rounded-xl overflow-hidden transition-colors duration-300`}
                 >
@@ -812,7 +818,7 @@ export default function LandingPage() {
       {/* Contact Form */}
       <section 
         ref={contactRef}
-        className="py-20 bg-gradient-to-br from-green-50 to-emerald-50"
+        className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50"
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16">
@@ -821,66 +827,63 @@ export default function LandingPage() {
               animate={contactInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7 }}
             >
-              <div className="inline-block mb-3 bg-green-100 px-4 py-1 rounded-full">
+              <div className="inline-block mb-3 bg-blue-100 px-4 py-1 rounded-full">
                 <div className="flex items-center">
-                  <Mail className="h-4 w-4 mr-2 text-green-600" />
-                  <span className="text-sm font-medium text-green-800">Contact Us</span>
+                  <Mail className="h-4 w-4 mr-2 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">Contact Us</span>
                 </div>
               </div>
               
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Start Your Sustainable Transformation
+                Get in Touch With Our Team
               </h2>
               
               <p className="text-xl text-gray-600 mb-8">
-                We're here to help you implement technological solutions that benefit both your business and the planet.
+                Have questions about Veroma? Interested in implementing civic technology in your community? We're here to help.
               </p>
               
               <div className="space-y-6">
                 <div className="flex items-start">
                   <div className="bg-white p-3 rounded-full shadow-md mr-4">
-                    <Mail className="h-6 w-6 text-green-700" />
+                    <Mail className="h-6 w-6 text-blue-700" />
                   </div>
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600">contact@ecotech.com</p>
+                    <p className="text-gray-600">hello@veroma.org</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
                   <div className="bg-white p-3 rounded-full shadow-md mr-4">
-                    <Phone className="h-6 w-6 text-green-700" />
+                    <Calendar className="h-6 w-6 text-blue-700" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">Phone</h3>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">Response Time</h3>
+                    <p className="text-gray-600">We typically respond within 24-48 hours</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
                   <div className="bg-white p-3 rounded-full shadow-md mr-4">
-                    <MapPin className="h-6 w-6 text-green-700" />
+                    <MapPin className="h-6 w-6 text-blue-700" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">Office</h3>
-                    <p className="text-gray-600">123 Green Technology St, San Francisco</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">Global Support</h3>
+                    <p className="text-gray-600">We offer assistance in multiple languages</p>
                   </div>
                 </div>
               </div>
               
-              <div className="mt-8">
-                <div className="h-[300px] bg-white rounded-xl shadow-md overflow-hidden">
-                  <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d50470.67784421391!2d-122.431416!3d37.773972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1676911291199!5m2!1sen!2sus" 
-                    width="100%" 
-                    height="100%" 
-                    style={{ border: 0 }} 
-                    allowFullScreen 
-                    loading="lazy" 
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Office location"
-                  ></iframe>
-                </div>
+              <div className="mt-8 bg-white p-6 rounded-xl shadow-md">
+                <h3 className="text-lg font-medium text-gray-900 mb-3">Are you a government representative?</h3>
+                <p className="text-gray-600 mb-4">We offer special verification for officials and government representatives, allowing you to create official proposals with enhanced visibility.</p>
+                <Link 
+                  to="/roles"
+                  className="inline-flex items-center text-blue-700 hover:text-blue-800 font-medium"
+                >
+                  Learn about representative roles
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </div>
             </motion.div>
 
@@ -889,13 +892,13 @@ export default function LandingPage() {
               animate={contactInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.2 }}
             >
-              <div className="bg-white p-8 rounded-xl shadow-lg border border-green-100">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-6">Request Information</h3>
+              <div className="bg-white p-8 rounded-xl shadow-lg border border-blue-100">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-6">Send us a Message</h3>
                 
                 <form onSubmit={handleContactSubmit} className="space-y-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Full Name*
+                      Your Name*
                     </label>
                     <input
                       id="name"
@@ -903,14 +906,14 @@ export default function LandingPage() {
                       required
                       value={contactForm.name}
                       onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      placeholder="Your name"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="John Doe"
                     />
                   </div>
                   
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Corporate Email*
+                      Your Email*
                     </label>
                     <input
                       id="email"
@@ -918,22 +921,8 @@ export default function LandingPage() {
                       required
                       value={contactForm.email}
                       onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      placeholder="youremail@company.com"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-                      Company
-                    </label>
-                    <input
-                      id="company"
-                      type="text"
-                      value={contactForm.company}
-                      onChange={(e) => setContactForm({...contactForm, company: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      placeholder="Your company name"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="you@example.com"
                     />
                   </div>
                   
@@ -947,7 +936,7 @@ export default function LandingPage() {
                       value={contactForm.message}
                       onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
                       rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                       placeholder="How can we help you?"
                     />
                   </div>
@@ -957,17 +946,17 @@ export default function LandingPage() {
                       id="privacy"
                       type="checkbox"
                       required
-                      className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded mt-1"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
                     />
                     <label htmlFor="privacy" className="ml-2 block text-sm text-gray-600">
-                      I accept the <Link to="/privacy" className="text-green-700 hover:text-green-800">Privacy Policy</Link> and the processing of my personal data.
+                      I accept the <Link to="/privacy" className="text-blue-700 hover:text-blue-800">Privacy Policy</Link> and the processing of my data.
                     </label>
                   </div>
                   
                   <button
                     type="submit"
                     disabled={formSubmitting}
-                    className="w-full py-3 px-4 bg-green-700 hover:bg-green-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-3 px-4 bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {formSubmitting ? (
                       <>
@@ -983,7 +972,7 @@ export default function LandingPage() {
                   </button>
 
                   <p className="text-xs text-gray-500 text-center">
-                    We respond to all inquiries within 24 business hours.
+                    We respond to all inquiries within 24-48 business hours.
                   </p>
                 </form>
               </div>
@@ -993,7 +982,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-green-900 to-emerald-800 text-white">
+      <section className="py-20 bg-gradient-to-br from-blue-900 to-indigo-800 text-white">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1001,21 +990,21 @@ export default function LandingPage() {
             transition={{ duration: 0.7 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Begin Your Journey Towards Sustainability
+              Ready to Make Your Voice Heard?
             </h2>
-            <p className="text-xl text-green-100 mb-8 max-w-3xl mx-auto">
-              Join hundreds of companies that are already transforming their operations with sustainable technology
+            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              Join thousands of active citizens who are already creating positive change in their communities through Veroma
             </p>
             <Link
               to="/signup"
-              className="inline-flex items-center px-8 py-4 bg-white text-green-800 rounded-lg font-semibold text-lg hover:bg-green-50 transition-colors shadow-lg"
+              className="inline-flex items-center px-8 py-4 bg-white text-blue-800 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg"
             >
-              Get Started Now
+              Create Free Account
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             
-            <p className="mt-6 text-green-200">
-              Already have an account? <Link to="/login" className="text-white underline hover:text-green-100">Sign in</Link>
+            <p className="mt-6 text-blue-200">
+              Already have an account? <Link to="/login" className="text-white underline hover:text-blue-100">Sign in</Link>
             </p>
           </motion.div>
         </div>
