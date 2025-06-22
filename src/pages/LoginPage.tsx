@@ -155,6 +155,7 @@ export default function LoginPage() {
               </div>
             </div>
 
+            <div>
               <div className="text-sm">
                 <Link to="/reset-password" className="font-medium text-blue-600 hover:text-blue-500">
                   Forgot your password?
@@ -204,15 +205,17 @@ export default function LoginPage() {
               Support
             </Link>
             <span className="text-gray-300">|</span>
+          </div>
           {loginAttempted && (
-          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-            <h3 className="text-sm font-medium text-yellow-800 mb-2">Troubleshooting tips:</h3>
-            <ul className="text-xs text-yellow-700 space-y-1 list-disc pl-4">
-              <li>Make sure your email address is correct</li>
-              <li>Check if your email has been verified</li>
-              <li>Try clearing your browser cache</li>
-              <li>If you keep having issues, try using a different browser</li>
-            </ul>
+            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+              <h3 className="text-sm font-medium text-yellow-800 mb-2">Troubleshooting tips:</h3>
+              <ul className="text-xs text-yellow-700 space-y-1 list-disc pl-4">
+                <li>Make sure your email address is correct</li>
+                <li>Check if your email has been verified</li>
+                <li>Try clearing your browser cache</li>
+                <li>If you keep having issues, try using a different browser</li>
+              </ul>
+            </div>
           )}
         </div>
       </div>
