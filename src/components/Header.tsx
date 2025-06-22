@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, User, LogOut, Home, PlusCircle, LayoutDashboard, Shield, Building2, Info, HelpCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +9,6 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const { user, signOut, role, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const handleSignOut = async () => {

@@ -36,9 +36,10 @@ export default function UserVoteHistory({ userId, onClose }: UserVoteHistoryProp
 
         if (rpcError) throw rpcError;
         setHistory(data || []);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching vote history:', err);
-        setError(err.message || 'Failed to load vote history.');
+        const message = err instanceof Error ? err.message : 'Failed to load vote history.';
+        setError(message);
       } finally {
         setLoading(false);
       }

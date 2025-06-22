@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Building2, ArrowLeft, Calendar, Vote, FileEdit, Megaphone, Users, CheckCircle, AlertTriangle, HelpCircle, ChevronRight, GanttChartSquare } from 'lucide-react';
+import { Building2, ArrowLeft, Calendar, Vote, FileEdit, Megaphone, Users, CheckCircle, AlertTriangle, HelpCircle, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -131,7 +131,7 @@ export default function RepresentativesPage() {
               Special Capabilities
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {features.map((feature, index) => (
+                {features.map((feature) => (
                 <motion.div
                   key={feature.title}
                   className="bg-white p-8 rounded-xl shadow-md border border-gray-100 hover:border-purple-200 transition-all duration-300"

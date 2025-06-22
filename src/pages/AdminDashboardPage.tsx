@@ -7,34 +7,26 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BoltBadge from '../components/BoltBadge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/Tabs';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  Users, 
-  Shield, 
-  AlertTriangle, 
-  Ban, 
-  UserCheck, 
-  UserX, 
-  Edit3, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  Crown, 
-  FileText, 
-  Calendar, 
-  BarChart3, 
-  Search, 
-  Filter, 
-  RefreshCw, 
-  CheckCircle, 
-  XCircle, 
-  Star,
-  MessageSquare,
+  Users,
+  Shield,
+  AlertTriangle,
+  Ban,
+  UserCheck,
+  Edit3,
+  Trash2,
+  Crown,
+  FileText,
+  BarChart3,
+  Search,
+  RefreshCw,
+  CheckCircle,
+  XCircle,
   Bell,
   Activity,
   TrendingUp,
-  Database,
-  Settings
+  Database
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -59,7 +51,7 @@ interface AuditLogEntry {
   action_type: 'INSERT' | 'UPDATE' | 'DELETE';
   target_entity_type: string;
   target_entity_id: string | null;
-  details: any;
+  details: unknown;
   created_at: string;
 }
 

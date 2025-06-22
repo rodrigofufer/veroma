@@ -35,7 +35,6 @@ export default function VerifyEmailPage() {
         const hashParams = new URLSearchParams(location.hash.replace('#', ''));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
-        const type = hashParams.get('type');
         const errorParam = hashParams.get('error');
         const errorDescription = hashParams.get('error_description');
 
@@ -55,10 +54,10 @@ export default function VerifyEmailPage() {
         setVerificationStatus('verifying');
 
         // Set the session using the tokens
-        const { data, error: sessionError } = await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken
-        });
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
 
         if (sessionError) throw sessionError;
 
@@ -92,9 +91,10 @@ export default function VerifyEmailPage() {
           navigate('/dashboard');
         }, 2000);
         
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Verification error:', err);
-        setError(err.message || 'Error verifying email');
+        const message = err instanceof Error ? err.message : 'Error verifying email';
+        setError(message);
         setVerificationStatus('error');
       }
     };
@@ -114,9 +114,10 @@ export default function VerifyEmailPage() {
       console.log('Attempting to resend verification email to:', email);
       await resendVerificationEmail(email);
       toast.success('Verification email sent successfully!');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to resend verification email:', error);
-      toast.error(error.message || 'Failed to send verification email');
+      const message = error instanceof Error ? error.message : 'Failed to send verification email';
+      toast.error(message);
     } finally {
       setResending(false);
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, Building2, ArrowLeft, CheckCircle, X, Vote, FileEdit, Megaphone, Calendar, TrendingUp, GanttChartSquare } from 'lucide-react';
+import { Users, Building2, ArrowLeft, CheckCircle, X, Vote, FileEdit, Megaphone, Calendar, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';

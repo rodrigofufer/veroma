@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ThumbsUp, ThumbsDown, MapPin, Calendar, Tag, Share2, MoreVertical, Edit2, Trash2, HelpCircle, Info, Building2, Clock, AlertTriangle } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MapPin, Calendar, Tag, Share2, MoreVertical, Edit2, Trash2, HelpCircle, Building2, Clock, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIdeas, type Idea } from '../contexts/IdeasContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,7 +14,6 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showVoteHelp, setShowVoteHelp] = useState(false);
-  const [showLocationHelp, setShowLocationHelp] = useState(false);
   const [showCategoryHelp, setShowCategoryHelp] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(idea.title);
@@ -49,7 +48,7 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
         text: idea.description,
         url: window.location.href
       });
-    } catch (error) {
+    } catch {
       toast.error('Sharing is not supported on this device');
     }
   };

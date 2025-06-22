@@ -1,19 +1,19 @@
 # 🌍 Veroma – International Civic Platform
 
-**Veroma** is a multilingual civic platform that enables anyone, anywhere to raise civic issues, submit proposals, and vote — from local neighborhoods to global movements.
-
-> Built in just 3 days during the Devpost Hackathon, Veroma is already functional, scalable, and ready for impact.
+**Veroma** is a multilingual civic platform that lets anyone raise issues, submit proposals and vote — from local neighborhoods to global movements.
 
 ---
 
-## ✨ Features (Current Version)
+## ✨ Key Features
 
-- 🗳️ Weekly voting system: 10 votes per user, reset every Monday
-- ✍️ Anonymous or public idea submission
-- 🌐 Predictive country selection (accent-insensitive)
+- 🗳️ **10 weekly votes** per user to support the best ideas
+- ✍️ Submit ideas **anonymously or publicly**
+- 🏛️ **Official proposals** from verified representatives
+- 🔎 Predictive country selection (accent-insensitive)
+- 📧 Email verification flow for new accounts
 - 📱 Fully responsive design (mobile + desktop)
-- 🌎 English UI (multilingual support with Lingo coming soon)
-- 🍪 Simple session cookie to keep you logged in
+- 🌎 English UI (with multilingual support coming soon)
+- 🍪 Simple session cookie to stay logged in
 
 ---
 
@@ -75,13 +75,5 @@ Veroma uses a lightweight cookie called `veroma_session` to keep you logged in a
 
 ---
 
-## 📜 Hackathon Compliance
 
-- ✅ Built entirely during the official Devpost Hackathon period  
-- ✅ All code, text, and assets are original or commercially licensed  
-- ✅ The name *Veroma* is a provisional development codename  
-- ✅ Participant retains all IP rights; Devpost receives a non-exclusive license for display  
-
----
-
-**Veroma** is not just a prototype — it’s the beginning of a scalable civic revolution.
+**Veroma** is an evolving project aiming to empower communities everywhere.

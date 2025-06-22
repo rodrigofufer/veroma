@@ -53,8 +53,9 @@ export default function VerifyOtp() {
 
       toast.success('Email verified successfully!');
       navigate('/dashboard');
-    } catch (error: any) {
-      toast.error(error.message || 'Invalid or expired code');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Invalid or expired code';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -73,8 +74,9 @@ export default function VerifyOtp() {
 
       setRemainingTime(60);
       toast.success('Verification code sent successfully');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to send verification code');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to send verification code';
+      toast.error(message);
     }
   };
 

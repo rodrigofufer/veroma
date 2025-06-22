@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { CheckCircle, ArrowRight, Sparkles, Users, Globe, Vote, RefreshCw, Loader, AlertTriangle } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import toast from 'react-hot-toast';
@@ -146,11 +146,12 @@ export default function EmailConfirmationSuccessPage() {
         
         toast.success('Email confirmed successfully!');
         
-      } catch (err: any) {
-        console.error('Confirmation error:', err);
-        setError('Error confirming email: ' + (err.message || 'Unknown error'));
-        setIsProcessing(false);
-      }
+        } catch (err: unknown) {
+          console.error('Confirmation error:', err);
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          setError('Error confirming email: ' + message);
+          setIsProcessing(false);
+        }
     };
 
     handleEmailConfirmation();
@@ -187,9 +188,10 @@ export default function EmailConfirmationSuccessPage() {
         setError('Your email is not yet verified. Please check your inbox and click the verification link.');
         setConfirmationSuccess(false);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error checking verification:', error);
-      setError('Failed to check verification status: ' + error.message);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      setError('Failed to check verification status: ' + message);
       setConfirmationSuccess(false);
     } finally {
       setIsProcessing(false);

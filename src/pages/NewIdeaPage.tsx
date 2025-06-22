@@ -9,7 +9,7 @@ import LocationAutocomplete from '../components/LocationAutocomplete';
 import CountryAutocomplete from '../components/CountryAutocomplete';
 import type { Location } from '../utils/cities';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, MapPin, Globe2, AlertTriangle, HelpCircle, Eye, EyeOff, Send, Info, Building2, Calendar } from 'lucide-react';
+import { FileText, Globe2, AlertTriangle, HelpCircle, Eye, EyeOff, Send, Info, Building2, Calendar } from 'lucide-react';
 
 type IdeaFormData = {
   title: string;
@@ -84,7 +84,7 @@ export default function NewIdeaPage() {
     votingEndsAt: ''
   });
   const { createIdea } = useIdeas();
-  const { user, role } = useAuth();
+  const { role } = useAuth();
   const navigate = useNavigate();
 
   // Check user role on component mount
@@ -128,7 +128,7 @@ export default function NewIdeaPage() {
         location_value: formData.selectedLocation?.name || formData.location,
         location_level: 'ciudad',
         country: formData.country,
-        category: formData.category as any,
+        category: formData.category,
         is_anonymous: formData.isAnonymous,
         is_official_proposal: formData.isOfficialProposal,
         voting_ends_at: formData.isOfficialProposal ? formData.votingEndsAt : null
@@ -294,7 +294,7 @@ export default function NewIdeaPage() {
                       <button
                         key={type.value}
                         type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, type: type.value as any }))}
+                          onClick={() => setFormData(prev => ({ ...prev, type: type.value }))}
                         className={`relative p-4 text-left border rounded-xl transition-all ${getTypeStyles(type.value)} ${
                           formData.type === type.value ? 'selected' : ''
                         }`}

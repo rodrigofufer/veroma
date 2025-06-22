@@ -165,7 +165,7 @@ export default function AboutPage() {
                     We're building a network of partners to help turn great ideas into reality:
                   </p>
                   <div className="grid md:grid-cols-2 gap-6 mb-8">
-                    {impactPartners.map((partner, index) => (
+                    {impactPartners.map((partner) => (
                       <div key={partner.title} className="flex items-start p-4 bg-gray-50 rounded-lg">
                         <div className="flex-shrink-0 p-2 bg-white rounded-lg mr-4">
                           <partner.icon className="h-6 w-6 text-blue-800" />

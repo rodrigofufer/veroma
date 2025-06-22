@@ -83,10 +83,17 @@ const generatePassword = (): string => {
 };
 
 // Main function to generate test users
+export interface GenerationStats {
+  total: number;
+  citizens: number;
+  representatives: number;
+  errors: number;
+}
+
 export const generateTestUsers = async (
   numUsers: number = 100,
   representativePercentage: number = 10
-): Promise<{ success: boolean; message: string; stats: any }> => {
+): Promise<{ success: boolean; message: string; stats: GenerationStats }> => {
   try {
     console.log(`Starting generation of ${numUsers} test users (${representativePercentage}% representatives)...`);
     

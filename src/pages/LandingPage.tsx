@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useIdeas } from '../contexts/IdeasContext';
-import { Globe2, MapPin, Users, TrendingUp, ChevronRight, MessageCircle, Vote, ArrowRight, Lightbulb, ThumbsUp, Calendar, BarChart3, Filter, FileEdit, Building2, Shield, Check, Info } from 'lucide-react';
+
+import { Globe2, Users, TrendingUp, ChevronRight, Vote, ArrowRight, Lightbulb, Calendar, FileEdit, Building2, Shield, Check, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BoltBadge from '../components/BoltBadge';
 import IdeaCard from '../components/IdeaCard';
 import { fetchPublicStats, supabase } from '../utils/supabaseClient';
-import toast from 'react-hot-toast';
 
 type Stats = {
   totalIdeas: number;
@@ -46,7 +45,6 @@ type Idea = {
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user, refreshSession } = useAuth();
-  const { voteOnIdea } = useIdeas();
   const [stats, setStats] = useState<Stats>({
     totalIdeas: 0,
     totalUsers: 0,
@@ -59,8 +57,6 @@ export default function LandingPage() {
     country: 'all',
     state: 'all'
   });
-  const [countries, setCountries] = useState<string[]>([]);
-  const [states, setStates] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showIntroModal, setShowIntroModal] = useState(false);
 
@@ -148,12 +144,6 @@ export default function LandingPage() {
 
         setIdeas(processedIdeas);
 
-        // Get unique countries and states
-        const uniqueCountries = [...new Set(data?.map(idea => idea.country))];
-        setCountries(uniqueCountries);
-
-        const uniqueStates = [...new Set(data?.map(idea => idea.location_value))];
-        setStates(uniqueStates);
 
       } catch (error) {
         console.error('Error fetching ideas:', error);
@@ -165,63 +155,6 @@ export default function LandingPage() {
     fetchIdeas();
   }, [filters, user]);
 
-  const handleVote = async (ideaId: string, voteType: 'up' | 'down') => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    try {
-      // Optimistically update UI
-      setIdeas(prevIdeas =>
-        prevIdeas.map(idea => {
-          if (idea.id === ideaId) {
-            const isChangingVote = idea.user_vote && idea.user_vote !== voteType;
-            const isRemovingVote = idea.user_vote === voteType;
-            
-            let newUpvotes = idea.upvotes;
-            let newDownvotes = idea.downvotes;
-            
-            // Remove existing vote if any
-            if (idea.user_vote === 'up') newUpvotes--;
-            if (idea.user_vote === 'down') newDownvotes--;
-            
-            // Add new vote if not removing
-            if (!isRemovingVote) {
-              if (voteType === 'up') newUpvotes++;
-              if (voteType === 'down') newDownvotes++;
-            }
-
-            return {
-              ...idea,
-              upvotes: Math.max(0, newUpvotes),
-              downvotes: Math.max(0, newDownvotes),
-              user_vote: isRemovingVote ? null : voteType
-            };
-          }
-          return idea;
-        })
-      );
-
-      await voteOnIdea(ideaId, voteType);
-    } catch (error) {
-      console.error('Error voting:', error);
-      // Revert optimistic update on error by refetching ideas
-      const { data } = await supabase
-        .from('ideas')
-        .select('*')
-        .eq('id', ideaId)
-        .single();
-      
-      if (data) {
-        setIdeas(prevIdeas =>
-          prevIdeas.map(idea =>
-            idea.id === ideaId ? { ...idea, ...data } : idea
-          )
-        );
-      }
-    }
-  };
 
   const categories = [
     { value: 'all', label: 'All Categories' },
@@ -248,7 +181,6 @@ export default function LandingPage() {
 
   // Separate official proposals for special display
   const officialProposals = ideas.filter(idea => idea.is_official_proposal);
-  const regularIdeas = ideas.filter(idea => !idea.is_official_proposal);
 
   return (
     <div className="min-h-screen flex flex-col">

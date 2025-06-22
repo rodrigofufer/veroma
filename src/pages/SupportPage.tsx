@@ -121,8 +121,8 @@ export default function SupportPage() {
         subject: '',
         message: ''
       });
-    } catch (error) {
-      toast.error('Failed to send message. Please try again.');
+      } catch {
+        toast.error('Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -182,7 +182,7 @@ export default function SupportPage() {
               <section className="mb-12">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">Resources</h2>
                 <div className="grid md:grid-cols-3 gap-6">
-                  {resources.map((resource, index) => (
+                    {resources.map((resource) => (
                     <motion.div
                       key={resource.title}
                       className={`p-6 bg-${resource.color}-50 rounded-xl hover:bg-${resource.color}-100 transition-colors cursor-pointer`}

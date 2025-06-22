@@ -66,7 +66,7 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
   const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const [voteStatus, setVoteStatus] = useState<{ votes_remaining: number; votes_reset_at: string; weekly_vote_limit: number } | null>(null);
-  const { user, emailVerified } = useAuth();
+  const { user } = useAuth();
 
   const updateIdea = async (id: string, data: UpdateIdeaData) => {
     if (!user) {
@@ -92,9 +92,10 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       setUserIdeas(updateIdeasArray);
 
       toast.success('Idea updated successfully!');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating idea:', error);
-      toast.error(error.message || 'Error updating idea');
+      const message = error instanceof Error ? error.message : 'Error updating idea';
+      toast.error(message);
     }
   };
 
@@ -130,11 +131,14 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       setUserIdeas(prevIdeas => [ideaWithAuthor, ...prevIdeas]);
 
       toast.success(data.is_official_proposal ? 'Official proposal created successfully!' : 'Idea created successfully!');
-    } catch (error: any) {
-      console.error('Error creating idea:', error);
+      } catch (error: unknown) {
+        console.error('Error creating idea:', error);
       
       // Handle specific email verification error
-      if (error.message?.includes('EMAIL_NOT_VERIFIED') || error.message?.includes('verify your email')) {
+        if (
+          error instanceof Error &&
+          (error.message.includes('EMAIL_NOT_VERIFIED') || error.message.includes('verify your email'))
+        ) {
         throw new Error('Please verify your email address before creating ideas');
       }
       
@@ -165,9 +169,10 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       setUserIdeas(prevIdeas => prevIdeas.filter(idea => idea.id !== id));
 
       toast.success('Idea deleted successfully!');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting idea:', error);
-      toast.error(error.message || 'Error deleting idea');
+      const message = error instanceof Error ? error.message : 'Error deleting idea';
+      toast.error(message);
       
       await Promise.all([
         fetchIdeas(),
@@ -187,7 +192,6 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       const updateIdeaInList = (prevIdeas: Idea[]) =>
         prevIdeas.map(idea => {
           if (idea.id === ideaId) {
-            const isChangingVote = idea.user_vote && idea.user_vote !== voteType;
             const isRemovingVote = idea.user_vote === voteType;
             
             let newUpvotes = idea.upvotes;
@@ -243,14 +247,18 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       }
 
       toast.success(result.message || 'Vote recorded successfully!');
-    } catch (error: any) {
-      console.error('Error voting on idea:', error);
+      } catch (error: unknown) {
+        console.error('Error voting on idea:', error);
       
       // Handle specific email verification error
-      if (error.message?.includes('EMAIL_NOT_VERIFIED') || error.message?.includes('verify your email')) {
+        if (
+          error instanceof Error &&
+          (error.message.includes('EMAIL_NOT_VERIFIED') || error.message.includes('verify your email'))
+        ) {
         toast.error('Please verify your email address before voting');
       } else {
-        toast.error(error.message || 'Error recording vote');
+          const message = error instanceof Error ? error.message : 'Error recording vote';
+          toast.error(message);
       }
       
       // Revert optimistic update on error
@@ -295,7 +303,7 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       })) || [];
 
       setIdeas(processedIdeas);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching ideas:', error);
     } finally {
       setLoading(false);
@@ -327,9 +335,9 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       })) || [];
 
       setGlobalIdeas(processedIdeas);
-    } catch (error) {
-      console.error('Error fetching global ideas:', error);
-    } finally {
+      } catch (error: unknown) {
+        console.error('Error fetching global ideas:', error);
+      } finally {
       setLoading(false);
     }
   };
@@ -366,9 +374,9 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
       })) || [];
 
       setUserIdeas(processedIdeas);
-    } catch (error) {
-      console.error('Error fetching user ideas:', error);
-    } finally {
+      } catch (error: unknown) {
+        console.error('Error fetching user ideas:', error);
+      } finally {
       setLoading(false);
     }
   };
@@ -399,10 +407,10 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
         } else {
           setVoteStatus(null);
         }
-      } catch (error) {
-        console.error('Error fetching vote status:', error);
-        setVoteStatus(null);
-      }
+        } catch (error: unknown) {
+          console.error('Error fetching vote status:', error);
+          setVoteStatus(null);
+        }
     };
 
     fetchVoteStatus();
@@ -418,9 +426,9 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
           fetchGlobalIdeas(),
           fetchUserIdeas()
         ]);
-      } catch (error) {
-        console.error('Error loading ideas data:', error);
-      } finally {
+        } catch (error: unknown) {
+          console.error('Error loading ideas data:', error);
+        } finally {
         setLoading(false);
       }
     };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useIdeas } from '../contexts/IdeasContext';
+import { useIdeas, type Idea } from '../contexts/IdeasContext';
 import { useAuth } from '../contexts/AuthContext';
 import IdeaCard from '../components/IdeaCard';
 import Header from '../components/Header';
@@ -57,9 +57,10 @@ export default function Dashboard() {
         setError(null);
         await fetchIdeas();
         await fetchStats();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error initializing dashboard:', error);
-        setError(error.message || 'Failed to load dashboard data');
+        const message = error instanceof Error ? error.message : 'Failed to load dashboard data';
+        setError(message);
       }
     };
 
@@ -137,8 +138,8 @@ export default function Dashboard() {
     }
   };
 
-  const filterIdeas = (ideasToFilter: any[]) => {
-    let filtered = ideasToFilter.filter(idea => {
+  const filterIdeas = (ideasToFilter: Idea[]) => {
+    const filtered = ideasToFilter.filter(idea => {
       const matchesType = filters.type === 'all' || idea.type === filters.type;
       const matchesCategory = filters.category === 'all' || idea.category === filters.category;
       const matchesCountry = filters.country === 'all' || idea.country === filters.country;
@@ -396,7 +397,7 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {stats.trendingCategories.map((cat, index) => (
+                    {stats.trendingCategories.map((cat) => (
                     <div key={cat.category} className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">{cat.category}</span>
                       <span className="text-sm font-medium text-gray-900">{cat.count}</span>

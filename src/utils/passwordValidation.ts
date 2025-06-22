@@ -28,7 +28,7 @@ export const validatePassword = (password: string): PasswordValidationResult => 
   }
 
   // At least one special character
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
     errors.push('Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)');
   }
 
@@ -50,7 +50,7 @@ export const getPasswordStrength = (password: string): {
   if (/[A-Z]/.test(password)) score++;
   if (/[a-z]/.test(password)) score++;
   if (/\d/.test(password)) score++;
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score++;
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score++;
   if (password.length >= 16) score++;
 
   if (score <= 2) return { score, label: 'Weak', color: 'red' };

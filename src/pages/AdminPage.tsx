@@ -7,11 +7,10 @@ import Footer from '../components/Footer';
 import BoltBadge from '../components/BoltBadge';
 import { motion } from 'framer-motion';
 import { 
-  Users, 
-  Database, 
-  Settings, 
-  RefreshCw, 
-  Shield, 
+  Users,
+  Database,
+  RefreshCw,
+  Shield,
   UserPlus, 
   Loader, 
   AlertTriangle,
@@ -19,7 +18,7 @@ import {
   XCircle
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { generateTestUsers } from '../utils/generateTestUsers';
+import { generateTestUsers, type GenerationStats } from '../utils/generateTestUsers';
 
 export default function AdminPage() {
   const { user, role, loading: authLoading } = useAuth();
@@ -27,7 +26,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [generationResult, setGenerationResult] = useState<any>(null);
+  const [generationResult, setGenerationResult] = useState<{ success: boolean; message: string; stats: GenerationStats } | null>(null);
   const [userCount, setUserCount] = useState<number>(0);
   const [citizenCount, setCitizenCount] = useState<number>(0);
   const [representativeCount, setRepresentativeCount] = useState<number>(0);

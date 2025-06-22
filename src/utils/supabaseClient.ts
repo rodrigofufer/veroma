@@ -8,22 +8,29 @@ if (typeof process !== 'undefined' && process.env) {
 
 // Handle both browser (Vite) and Node.js environments
 const getEnvVar = (key: string): string => {
+  const fallbackKey = key.startsWith('VITE_') ? key.replace(/^VITE_/, '') : `VITE_${key}`;
+
   // In browser/Vite environment
   if (typeof window !== 'undefined' && import.meta?.env) {
-    return import.meta.env[key] || '';
+    return import.meta.env[key] || import.meta.env[fallbackKey] || '';
   }
+
   // In Node.js environment
   if (typeof process !== 'undefined' && process.env) {
-    return process.env[key] || '';
+    return process.env[key] || process.env[fallbackKey] || '';
   }
+
   return '';
 };
 
-const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
+const getSupabaseUrl = () => getEnvVar('VITE_SUPABASE_URL');
+const getSupabaseAnonKey = () => getEnvVar('VITE_SUPABASE_ANON_KEY');
+
+const supabaseUrl = getSupabaseUrl();
+const supabaseAnonKey = getSupabaseAnonKey();
 
 export const isSupabaseConfigured = (): boolean => {
-  return Boolean(supabaseUrl && supabaseAnonKey);
+  return Boolean(getSupabaseUrl() && getSupabaseAnonKey());
 };
 
 // Get the current domain, handling development and production environments

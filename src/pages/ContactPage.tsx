@@ -30,7 +30,7 @@ export default function ContactPage() {
       setName('');
       setEmail('');
       setMessage('');
-    } catch (error) {
+    } catch {
       toast.error('Failed to send message. Please try again.');
     } finally {
       setSending(false);

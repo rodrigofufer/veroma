@@ -164,7 +164,7 @@ export default function CountryAutocomplete({ value, onChange, onSelect, error }
             exit={{ opacity: 0, y: -10 }}
             className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200 max-h-60 overflow-auto"
           >
-            {suggestions.map((country, index) => (
+            {suggestions.map((country) => (
               <button
                 key={country}
                 type="button" // Explicitly set button type
