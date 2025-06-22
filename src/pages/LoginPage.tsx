@@ -27,6 +27,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!supabaseConfigured) {
       setError('Supabase is not configured. Please check the .env file.');
       toast.error('Server configuration error.');
       return;
