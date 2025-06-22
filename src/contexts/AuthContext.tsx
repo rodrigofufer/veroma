@@ -43,6 +43,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserRole = async (userId: string): Promise<string> => {
     try {
+      if (!userId) {
+        console.log('fetchUserRole: No user ID provided');
+        return 'user';
+      }
+
       const { data, error } = await supabase
         .from('profiles')
         .select('role')
@@ -125,33 +130,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const profileExists = await checkUserProfileExists(session.user.id);
-          if (!profileExists) {
-            await createProfileIfNeeded(session.user.id, {
-              email: session.user.email,
-              name: session.user.user_metadata?.name || 'User',
-              country: session.user.user_metadata?.country || 'Unknown'
-            });
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          setLoading(false);
+          return;
+        }
+        
+        if (data?.session) {
+          try {
+            const profileExists = await checkUserProfileExists(data.session.user.id);
+            if (!profileExists) {
+              await createProfileIfNeeded(data.session.user.id, {
+                email: data.session.user.email,
+                name: data.session.user.user_metadata?.name || 'User',
+                country: data.session.user.user_metadata?.country || 'Unknown'
+              });
+            }
+            
+            setUser(data.session.user);
+            await syncEmailVerification(data.session.user);
+            const r = await fetchUserRole(data.session.user.id);
+            setRole(r);
+          } catch (userError) {
+            console.error('Error initializing user data:', userError);
           }
-          setUser(session.user);
-          await syncEmailVerification(session.user);
-          const r = await fetchUserRole(session.user.id);
-          setRole(r);
         } else {
           setUser(null);
           setEmailVerified(false);
           setRole(null);
         }
-        setLoading(false);
       } catch (error) {
         console.error('Error initializing auth:', error);
-        if (mounted) {
-          setUser(null);
-          setEmailVerified(false);
-          setLoading(false);
-        }
+        setUser(null);
+        setEmailVerified(false);
+      } finally {
+        setLoading(false);
       }
     };
 

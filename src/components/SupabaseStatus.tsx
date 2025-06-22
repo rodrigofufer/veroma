@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AlertCircle, CheckCircle, Loader, RefreshCw } from 'lucide-react';
-import { supabase, isSupabaseConfigured, syncEmailConfirmation } from '../utils/supabaseClient';
+import { AlertCircle, RefreshCw } from 'lucide-react';
+import { isSupabaseConfigured, supabase } from '../utils/supabaseClient';
 import toast from 'react-hot-toast';
-import { useAuth } from '../contexts/AuthContext';
 
 export default function SupabaseStatus() {
   const [status, setStatus] = useState<'checking' | 'connected' | 'error'>('checking');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isRetrying, setIsRetrying] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const { user, refreshSession } = useAuth();
 
   const checkConnection = useCallback(async () => {
     if (!isSupabaseConfigured()) {
@@ -31,16 +29,6 @@ export default function SupabaseStatus() {
       } else {
         setStatus('connected');
         console.log('Supabase connection successful');
-        
-        // If user exists, sync their email verification status
-        if (user) {
-          try {
-            await syncEmailConfirmation(user.id);
-            await refreshSession();
-          } catch (syncError) {
-            console.error('Error syncing user data:', syncError);
-          }
-        }
       }
     } catch (err) {
       console.error('Supabase connection check failed:', err);
@@ -50,26 +38,22 @@ export default function SupabaseStatus() {
     } finally {
       setIsRetrying(false);
     }
-  }, [user, refreshSession]);
-  useEffect(() => {
+  }, []);
 
+  useEffect(() => {
     checkConnection();
   }, [checkConnection]);
+
+  // Don't render anything when connected
+  if (status === 'connected') {
+    return null;
+  }
 
   if (status === 'checking') {
     return (
       <div className="fixed bottom-4 left-4 z-50 bg-gray-700 bg-opacity-80 p-3 rounded-lg shadow-lg flex items-center space-x-2">
-        <Loader className="h-4 w-4 text-white animate-spin" />
+        <RefreshCw className="h-4 w-4 text-white animate-spin" />
         <span className="text-xs text-white">Checking connection...</span>
-      </div>
-    );
-  }
-
-  if (status === 'connected') {
-    return (
-      <div className="fixed bottom-4 left-4 z-50 bg-white p-3 rounded-lg shadow-lg flex items-center space-x-2">
-        <Loader className="h-5 w-5 text-blue-600 animate-spin mr-2" />
-        <span className="text-sm text-gray-600">Checking database connection...</span>
       </div>
     );
   }
@@ -104,7 +88,7 @@ export default function SupabaseStatus() {
             className="inline-flex items-center px-2 py-1 text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 disabled:opacity-50"
           >
             {isRetrying ? (
-              <Loader className="h-3.5 w-3.5 animate-spin mr-1.5" />
+              <RefreshCw className="h-3.5 w-3.5 animate-spin mr-1.5" />
             ) : (
               <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
             )}
@@ -115,4 +99,6 @@ export default function SupabaseStatus() {
       ) : null
     );
   }
+
+  return null;
 }

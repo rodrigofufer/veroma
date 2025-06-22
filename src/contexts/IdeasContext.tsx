@@ -376,7 +376,7 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
   // Fetch vote status when user changes
   useEffect(() => {
     const fetchVoteStatus = async () => {
-      if (!user) {
+      if (!user || !emailVerified) {
         setVoteStatus(null);
         return;
       }
@@ -411,6 +411,10 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
   // Fetch ideas when user changes
   useEffect(() => {
     const loadData = async () => {
+      if (!user) {
+        return;
+      }
+      
       setLoading(true);
       try {
         await Promise.all([
@@ -426,7 +430,7 @@ export function IdeasProvider({ children }: { children: ReactNode }) {
     };
     
     loadData();
-  }, [user]);
+  }, [user, emailVerified]);
 
   return (
     <IdeasContext.Provider value={{

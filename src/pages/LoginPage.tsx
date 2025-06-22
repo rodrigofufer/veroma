@@ -63,7 +63,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
+          <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 mb-6">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to home
           </Link>
@@ -83,11 +83,11 @@ export default function LoginPage() {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {/* This block will be displayed if environment variables are not present */}
           {!supabaseConfigured && (
-            <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+            <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
               <div className="flex items-center">
                 <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0" />
-                <div>
-                  <div className="font-medium">Database Not Configured</div>
+                <div className="flex-1">
+                  <div className="font-medium text-sm">Database Not Configured</div>
                   <div className="mt-1 text-xs">
                     Please set your Supabase environment variables in the .env file:
                     <br />• VITE_SUPABASE_URL = https://your-project.supabase.co
@@ -102,8 +102,11 @@ export default function LoginPage() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Generic error block to display any type of error */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error}
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+                <div className="flex items-start">
+                  <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">{error}</span>
+                </div>
               </div>
             )}
 

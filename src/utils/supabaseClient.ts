@@ -19,10 +19,9 @@ const getEnvVar = (key: string): string => {
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
 const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
-// Minimal logging to avoid cluttering the console
-if (typeof window !== 'undefined') {
-  console.log("Supabase:", (supabaseUrl && supabaseAnonKey) ? "✓ Configured" : "✗ Configuration issue");
-}
+// Only log to console in development
+const isDev = import.meta.env.MODE === 'development';
+isDev && console.log("Supabase:", (supabaseUrl && supabaseAnonKey) ? "✓ Configured" : "✗ Configuration issue");
 
 export const isSupabaseConfigured = (): boolean => {
   return Boolean(supabaseUrl && supabaseAnonKey);
@@ -74,7 +73,7 @@ const createMockClient = () => {
 
 export const supabase = (() => {
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error(`Missing Supabase environment variables. Please check your .env file.`);
+    isDev && console.error(`Missing Supabase environment variables. Please check your .env file.`);
     return createMockClient() as any;
   }
   return createClient(supabaseUrl, supabaseAnonKey);
@@ -130,7 +129,7 @@ export const syncEmailConfirmation = async (userId: string): Promise<boolean> =>
     const { error } = await supabase.rpc('sync_user_email_confirmation', {
       user_id: userId
     });
-    
+
     if (error) {
       console.error('Error syncing email confirmation:', error);
       return false;
