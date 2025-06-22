@@ -271,7 +271,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Show loading toast
       toast.loading('Signing in...', { id: 'auth-signin', duration: 30000 });
       
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email.trim(),
         password: data.password
       });

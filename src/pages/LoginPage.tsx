@@ -162,6 +162,7 @@ export default function LoginPage() {
                 </Link>
               </div>
             </div>
+          </form>
 
             <div>
               <button
