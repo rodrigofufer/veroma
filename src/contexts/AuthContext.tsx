@@ -126,28 +126,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initializeAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
-          email: data.email.trim(),
-          password: data.password
-            const profileExists = await checkUserProfileExists(session.user.id);
-            if (!profileExists) {
-              await createProfileIfNeeded(session.user.id, {
-                email: session.user.email,
-                name: session.user.user_metadata?.name || 'User',
-                country: session.user.user_metadata?.country || 'Unknown'
-              });
-            }
-            setUser(session.user);
-            await syncEmailVerification(session.user);
-            const r = await fetchUserRole(session.user.id);
-            setRole(r);
-          } else {
-            setUser(null);
-            setEmailVerified(false);
-            setRole(null);
+        if (session) {
+          const profileExists = await checkUserProfileExists(session.user.id);
+          if (!profileExists) {
+            await createProfileIfNeeded(session.user.id, {
+              email: session.user.email,
+              name: session.user.user_metadata?.name || 'User',
+              country: session.user.user_metadata?.country || 'Unknown'
+            });
           }
-          setLoading(false);
+          setUser(session.user);
+          await syncEmailVerification(session.user);
+          const r = await fetchUserRole(session.user.id);
+          setRole(r);
+        } else {
+          setUser(null);
+          setEmailVerified(false);
+          setRole(null);
         }
+        setLoading(false);
       } catch (error) {
         console.error('Error initializing auth:', error);
         if (mounted) {
@@ -273,7 +270,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         // Clear any previous errors
-        setError(null);
         toast.loading('Creating your account...', { id: 'signup' });
 
         const { data: authData, error } = await supabase.auth.signUp({
