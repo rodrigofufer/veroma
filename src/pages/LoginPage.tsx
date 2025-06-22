@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader, Database, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader } from 'lucide-react';
 import { isSupabaseConfigured } from '../utils/supabaseClient';
 import toast from 'react-hot-toast';
 
@@ -9,19 +9,14 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { signIn, user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [loginAttempted, setLoginAttempted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [checkingConfig, setCheckingConfig] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   // Check if Supabase is configured
   const supabaseConfigured = isSupabaseConfigured();
-
-  // Check configuration status
-  useEffect(() => {
-    setCheckingConfig(false);
-  }, [supabaseConfigured]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -32,23 +27,23 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginAttempted(true);
     
     if (!supabaseConfigured) {
       setError('Supabase is not configured. Please check the .env file.');
       toast.error('Database connection error. Please check the .env file.');
       return;
     }
-
+    
     setLoading(true);
     setError(null);
-
+    
     try {
-      toast.loading('Signing in...', { id: 'login' });
-      console.log('Attempting to sign in with email:', email);
-      await signIn({ email, password });
+      toast.loading('Signing in...', { id: 'login', duration: 10000 });
       
-      // Navigation is handled in the auth state change listener
-      setError(null);
+      // Attempt to sign in
+      await signIn({ email, password });
+      toast.dismiss('login');
     } catch (err) {
       console.error('Login error:', err);
       toast.dismiss('login');
@@ -61,13 +56,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mb-6">
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 mb-6">
+          <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to home
           </Link>
         </div>
+      </div>
+      
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Sign in to your account
         </h2>
@@ -84,7 +82,7 @@ export default function LoginPage() {
           {/* This block will be displayed if environment variables are not present */}
           {!supabaseConfigured && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0" />
                 <div className="flex-1">
                   <div className="font-medium text-sm">Database Not Configured</div>
@@ -92,8 +90,8 @@ export default function LoginPage() {
                     Please set your Supabase environment variables in the .env file:
                     <br />• VITE_SUPABASE_URL = https://your-project.supabase.co
                     <br />• VITE_SUPABASE_ANON_KEY = your-anon-key
-                    <br /><span className="mt-2 inline-block">See .env.example for reference format</span>
                   </div>
+                  <div className="mt-2 text-xs">Your .env file may need to be reloaded. Try restarting the development server.</div>
                 </div>
               </div>
             </div>
@@ -104,8 +102,8 @@ export default function LoginPage() {
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
                 <div className="flex items-start">
-                  <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm">{error}</span>
+                  <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0 mt-1" />
+                  <div className="text-sm">{error}</div>
                 </div>
               </div>
             )}
@@ -116,7 +114,7 @@ export default function LoginPage() {
               </label>
               <div className="mt-1">
                 <input
-                  id="email"
+                  id="email" 
                   name="email"
                   type="email"
                   autoComplete="email"
@@ -157,14 +155,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {checkingConfig && (
-              <div className="flex items-center justify-center py-2 text-gray-500">
-                <RefreshCw className="animate-spin h-4 w-4 mr-2" />
-                <span className="text-xs">Checking configuration...</span>
-              </div>
-            )}
-
-            <div className="flex items-center justify-end">
               <div className="text-sm">
                 <Link to="/reset-password" className="font-medium text-blue-600 hover:text-blue-500">
                   Forgot your password?
@@ -174,7 +164,7 @@ export default function LoginPage() {
 
             <div>
               <button
-                type="submit"
+                type="submit" 
                 disabled={loading || !supabaseConfigured}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -185,6 +175,10 @@ export default function LoginPage() {
                   </span>
                 ) : 'Sign in'}
               </button>
+              
+              {loginAttempted && !error && !loading && (
+                <div className="mt-2 text-center text-xs text-gray-500">If you're stuck at "Signing in...", try restarting your browser.</div>
+              )}
             </div>
           </form>
 
@@ -204,6 +198,22 @@ export default function LoginPage() {
               </Link>
             </div>
           </div>
+          
+          <div className="mt-6 flex space-x-4 justify-center">
+            <Link to="/support" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+              Support
+            </Link>
+            <span className="text-gray-300">|</span>
+          {loginAttempted && (
+          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <h3 className="text-sm font-medium text-yellow-800 mb-2">Troubleshooting tips:</h3>
+            <ul className="text-xs text-yellow-700 space-y-1 list-disc pl-4">
+              <li>Make sure your email address is correct</li>
+              <li>Check if your email has been verified</li>
+              <li>Try clearing your browser cache</li>
+              <li>If you keep having issues, try using a different browser</li>
+            </ul>
+          )}
         </div>
       </div>
     </div>

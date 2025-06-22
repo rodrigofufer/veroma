@@ -1,83 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
 
-// Load environment variables in Node.js environment
-if (typeof process !== 'undefined' && process.env) {
-  dotenv.config();
-}
+// Get environment variables with fallbacks
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 
-const getEnvVar = (key: string): string => {
-  if (typeof window !== 'undefined' && import.meta?.env) {
-    return import.meta.env[key] || '';
-  }
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env[key] || '';
-  }
-  return '';
-};
-
-const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
-
-// Only log to console in development
-const isDev = import.meta.env.MODE === 'development';
-isDev && console.log("Supabase:", (supabaseUrl && supabaseAnonKey) ? "✓ Configured" : "✗ Configuration issue");
-
+// Check if Supabase is configured
 export const isSupabaseConfigured = (): boolean => {
   return Boolean(supabaseUrl && supabaseAnonKey);
 };
 
-const createMockClient = () => {
-  // Mock client for when Supabase is not configured
-  const mockAuth = {
-    getSession: () => Promise.resolve({ data: { session: null }, error: { message: 'Database not connected. Please check .env file.' } }),
-    getUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Database not connected. Please check .env file.' } }),
-    signUp: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Database not connected. Please check .env file.' } }),
-    signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Database not connected. Please check .env file.' } }),
-    signOut: () => Promise.resolve({ error: null }),
-    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-    resetPasswordForEmail: () => Promise.resolve({ data: {}, error: { message: 'Database not connected. Please check .env file.' } }),
-    updateUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Database not connected. Please check .env file.' } }),
-    refreshSession: () => Promise.resolve({ data: { session: null }, error: { message: 'Database not connected. Please check .env file.' } }),
-    resend: () => Promise.resolve({ data: {}, error: { message: 'Database not connected. Please check .env file.' } }),
-    verifyOtp: () => Promise.resolve({ data: { session: null, user: null }, error: { message: 'Database not connected. Please check .env file.' } })
-  };
-  
-  const mockFrom = (table: string) => ({
-    select: (columns?: string) => ({
-      eq: (column: string, value: any) => ({
-        single: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-        maybeSingle: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-        order: () => ({
-          limit: () => Promise.resolve({ data: [], error: { message: 'Supabase not configured' } })
-        })
-      })
-    }),
-    insert: (values: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-    update: (values: any) => ({
-      eq: (column: string, value: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } })
-    }),
-    delete: () => ({
-      eq: (column: string, value: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } })
-    })
-  });
-  
-  const mockRpc = (fn: string, params?: any) => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
-  
-  return { 
-    auth: mockAuth, 
-    from: mockFrom,
-    rpc: mockRpc
-  };
-};
-
-export const supabase = (() => {
-  if (!supabaseUrl || !supabaseAnonKey) {
-    isDev && console.error(`Missing Supabase environment variables. Please check your .env file.`);
-    return createMockClient() as any;
-  }
-  return createClient(supabaseUrl, supabaseAnonKey);
-})();
+// Create Supabase client
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+  },
+});
 
 // Helper functions
 export const checkUserProfileExists = async (userId: string): Promise<boolean> => {

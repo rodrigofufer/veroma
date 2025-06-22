@@ -10,6 +10,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+// Set maximum retry attempts for auth operations
+const MAX_RETRIES = 3;
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -42,12 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   const fetchUserRole = async (userId: string): Promise<string> => {
+    if (!userId) return 'user';
+    
     try {
-      if (!userId) {
-        console.log('fetchUserRole: No user ID provided');
-        return 'user';
-      }
-
       const { data, error } = await supabase
         .from('profiles')
         .select('role')
@@ -95,12 +95,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       console.log('Refreshing auth session...');
       const { data, error } = await supabase.auth.refreshSession();
+      
       if (error) {
         console.error('Session refresh error:', error);
         setUser(null);
         setEmailVerified(false);
+        setRole(null);
         return;
       }
+      
       if (data.session) {
         setUser(data.session.user);
         await syncEmailVerification(data.session.user);
@@ -128,30 +131,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
     
+    // Initialize authentication
     const initializeAuth = async () => {
       try {
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error getting session:', error);
+        // First check if Supabase is configured
+        if (!isSupabaseConfigured()) {
+          console.error('Supabase is not configured. Please check your environment variables.');
           setLoading(false);
           return;
         }
         
-        if (data?.session) {
+        // Get the current session
+        let attempt = 0;
+        let sessionData = null;
+        let sessionError = null;
+        
+        while (attempt < MAX_RETRIES) {
           try {
-            const profileExists = await checkUserProfileExists(data.session.user.id);
+            const response = await supabase.auth.getSession();
+            sessionData = response.data;
+            sessionError = response.error;
+            if (!sessionError) break;
+            attempt++;
+            await new Promise(r => setTimeout(r, 500 * attempt)); // Exponential backoff
+          } catch (e) {
+            attempt++;
+            await new Promise(r => setTimeout(r, 500 * attempt));
+            console.error(`Auth retry ${attempt}:`, e);
+          }
+        }
+        
+        if (sessionError) {
+          console.error('Error getting session after retries:', sessionError);
+          setLoading(false);
+          return;
+        }
+        
+        if (sessionData?.session) {
+          try {
+            const profileExists = await checkUserProfileExists(sessionData.session.user.id);
             if (!profileExists) {
-              await createProfileIfNeeded(data.session.user.id, {
-                email: data.session.user.email,
-                name: data.session.user.user_metadata?.name || 'User',
-                country: data.session.user.user_metadata?.country || 'Unknown'
+              await createProfileIfNeeded(sessionData.session.user.id, {
+                email: sessionData.session.user.email,
+                name: sessionData.session.user.user_metadata?.name || 'User',
+                country: sessionData.session.user.user_metadata?.country || 'Unknown'
               });
             }
             
-            setUser(data.session.user);
-            await syncEmailVerification(data.session.user);
-            const r = await fetchUserRole(data.session.user.id);
+            setUser(sessionData.session.user);
+            await syncEmailVerification(sessionData.session.user);
+            const r = await fetchUserRole(sessionData.session.user.id);
             setRole(r);
           } catch (userError) {
             console.error('Error initializing user data:', userError);
@@ -234,23 +263,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (data: { email: string; password: string }) => {
     if (!isSupabaseConfigured()) {
       const errorMessage = 'Supabase connection is not configured.';
-      console.error(errorMessage);
       toast.error('Server configuration error.');
       throw new Error(errorMessage);
     }
     
     try {
-      // Clear any previous auth toasts
-      toast.dismiss('auth-signin');
+      // Show loading toast
       toast.loading('Signing in...', { id: 'auth-signin', duration: 30000 });
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
-        email: data.email,
+      
+        email: email.trim(),
+        email: data.email.trim(),
         password: data.password
       });
 
       if (error) {
         console.error('Error in Supabase login:', error);
-        // Make sure to dismiss the loading toast
         toast.dismiss('auth-signin'); 
         
         let friendlyMessage;
@@ -270,8 +297,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.error(friendlyMessage, { id: 'auth-error' });
         throw new Error(friendlyMessage);
       }
+      
+      // Success - dismiss loading toast
+      toast.dismiss('auth-signin');
+      return authData;
+      
     } catch (error) {
       console.error('Error in signIn function:', error);
+      toast.dismiss('auth-signin');
       throw error;
     }
   };
@@ -279,8 +312,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (data: {email: string; password: string; options?: { data: Record<string, unknown> };}) => {
     try {
         if (!isSupabaseConfigured()) {
-            toast.error('Supabase connection is not configured.');
-            console.error('Supabase connection not configured. Check .env file.');
+            toast.error('Server configuration error.');
             throw new Error('Supabase not configured');
         }
 
@@ -288,8 +320,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.loading('Creating your account...', { id: 'signup' });
 
         const { data: authData, error } = await supabase.auth.signUp({
-            email: data.email,
-            password: data.password,
+            email: data.email.trim(),
+            password: data.password.trim(),
             options: {
                 data: data.options?.data,
                 emailRedirectTo: `${window.location.origin}/email-confirmed`
@@ -377,16 +409,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
         const targetEmail = email || user?.email;
         if (!targetEmail) {
-            throw new Error('No email address found.');
+            toast.error('No email address found');
+            throw new Error('No email address found');
         }
         const { error } = await supabase.auth.resend({
             type: 'signup',
-            email: targetEmail,
+            email: targetEmail.trim(),
             options: {
                 emailRedirectTo: `${window.location.origin}/email-confirmed`
             }
         });
-        if (error) throw error;
+        if (error) {
+            console.error('Error resending verification email:', error);
+            throw error;
+        }
         toast.success('Verification email sent successfully');
     } catch (error: any) {
         console.error('Error in resendVerificationEmail:', error);
@@ -397,13 +433,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkEmailVerification = async () => {
     try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        let { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Error checking session:', error);
+            throw error;
+        }
+        
         if (session?.user?.email_confirmed_at) {
             await syncEmailVerification(session.user);
             setEmailVerified(true);
             setUser(session.user);
             return true;
+        } else if (session) {
+            // Try to refresh the session to get updated confirmation status
+            const refreshResult = await supabase.auth.refreshSession();
+            if (!refreshResult.error && refreshResult.data.session?.user?.email_confirmed_at) {
+                await syncEmailVerification(refreshResult.data.session.user);
+                setEmailVerified(true);
+                setUser(refreshResult.data.session.user);
+                return true;
+            }
         }
         return false;
     } catch (error) {
