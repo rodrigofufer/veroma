@@ -88,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshSession = async () => {
     try {
       setLoading(true);
+      console.log('Refreshing auth session...');
       const { data, error } = await supabase.auth.refreshSession();
       if (error) {
         console.error('Session refresh error:', error);
@@ -98,8 +99,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.session) {
         setUser(data.session.user);
         await syncEmailVerification(data.session.user);
-        const r = await fetchUserRole(data.session.user.id);
-        setRole(r);
+        try {
+          const r = await fetchUserRole(data.session.user.id);
+          setRole(r);
+        } catch (roleError) {
+          console.error('Error fetching user role:', roleError);
+          setRole('user'); // Default role if fetch fails
+        }
       } else {
         setUser(null);
         setEmailVerified(false);
@@ -216,12 +222,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (data: { email: string; password: string }) => {
     if (!isSupabaseConfigured()) {
       const errorMessage = 'Supabase connection is not configured.';
-      toast.error(errorMessage);
+      console.error(errorMessage);
+      toast.error('Server configuration error.');
       throw new Error(errorMessage);
     }
     
     try {
-      toast.loading('Signing in...', { id: 'auth-signin' });
+      // Clear any previous auth toasts
+      toast.dismiss('auth-signin');
+      toast.loading('Signing in...', { id: 'auth-signin', duration: 30000 });
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password
@@ -229,8 +238,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Error in Supabase login:', error);
+        // Make sure to dismiss the loading toast
         toast.dismiss('auth-signin');
-        let friendlyMessage = 'Invalid credentials. Please try again.';
+        
+        let friendlyMessage;
         if (error.message.includes('Email not confirmed')) {
           friendlyMessage = 'Your email is not verified. Please check your inbox.';
           navigate('/verify-email', { 
@@ -239,11 +250,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               message: 'Your email is not verified. Please check your inbox.'
             }
           });
+        } else if (error.message.includes('Invalid login credentials')) {
+          friendlyMessage = 'Invalid email or password. Please try again.';
+        } else {
+          friendlyMessage = 'Login failed: ' + error.message;
         }
-        toast.error(friendlyMessage);
+        toast.error(friendlyMessage, { id: 'auth-error' });
         throw new Error(friendlyMessage);
       }
-      toast.success('Signed in successfully!', { id: 'auth-signin' });
     } catch (error) {
       console.error('Error in signIn function:', error);
       throw error;
@@ -253,10 +267,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (data: {email: string; password: string; options?: { data: Record<string, unknown> };}) => {
     try {
         if (!isSupabaseConfigured()) {
-            toast.error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+            toast.error('Supabase connection is not configured.');
+            console.error('Supabase connection not configured. Check .env file.');
             throw new Error('Supabase not configured');
         }
+
+        // Clear any previous errors
+        setError(null);
         toast.loading('Creating your account...', { id: 'signup' });
+
         const { data: authData, error } = await supabase.auth.signUp({
             email: data.email,
             password: data.password,
@@ -284,16 +303,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+        toast.loading('Signing out...', { id: 'signout' });
         await supabase.auth.signOut();
         setUser(null);
         setEmailVerified(false);
         setRole(null);
         document.cookie = 'veroma_session=; Max-Age=0; path=/; SameSite=Lax';
-        toast.success('Signed out successfully');
+        toast.success('Signed out successfully', { id: 'signout' });
         window.location.href = '/';
     } catch (error: any) {
         console.error('Error during sign out:', error);
-        toast.error('Error signing out, but you have been logged out');
+        toast.error('Error signing out, but you have been logged out', { id: 'signout' });
         window.location.href = '/';
         throw error;
     }
