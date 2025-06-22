@@ -38,10 +38,7 @@ export default function LoginPage() {
     try {
       console.log('Attempting to sign in with email:', email);
       await signIn({ email, password });
-      
-      // Show loading toast while auth state updates
-      toast.loading('Signing in...', { id: 'login' });
-      
+
       // Navigation is handled in the auth state change listener
     } catch (err) {
       console.error('Login error:', err);
@@ -49,7 +46,6 @@ export default function LoginPage() {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
-      setTimeout(() => toast.dismiss('login'), 2000);
     }
   };
 
