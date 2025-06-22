@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader, Database, RefreshCw } from 'lucide-react';
 import { isSupabaseConfigured } from '../utils/supabaseClient';
 import toast from 'react-hot-toast';
 
@@ -10,12 +10,18 @@ export default function LoginPage() {
   const { signIn, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [checkingConfig, setCheckingConfig] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   // Check if Supabase is configured
   const supabaseConfigured = isSupabaseConfigured();
+
+  // Check configuration status
+  useEffect(() => {
+    setCheckingConfig(false);
+  }, [supabaseConfigured]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -29,7 +35,7 @@ export default function LoginPage() {
     
     if (!supabaseConfigured) {
       setError('Supabase is not configured. Please check the .env file.');
-      toast.error('Server configuration error.');
+      toast.error('Database connection error. Please check the .env file.');
       return;
     }
 
@@ -42,10 +48,12 @@ export default function LoginPage() {
       await signIn({ email, password });
       
       // Navigation is handled in the auth state change listener
+      setError(null);
     } catch (err) {
       console.error('Login error:', err);
       toast.dismiss('login');
       setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -73,6 +81,7 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {/* This block will be displayed if environment variables are not present */}
           {!supabaseConfigured && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
               <div className="flex items-center">
@@ -81,8 +90,9 @@ export default function LoginPage() {
                   <div className="font-medium">Database Not Configured</div>
                   <div className="mt-1 text-xs">
                     Please set your Supabase environment variables in the .env file:
-                    <br />• VITE_SUPABASE_URL
-                    <br />• VITE_SUPABASE_ANON_KEY
+                    <br />• VITE_SUPABASE_URL = https://your-project.supabase.co
+                    <br />• VITE_SUPABASE_ANON_KEY = your-anon-key
+                    <br /><span className="mt-2 inline-block">See .env.example for reference format</span>
                   </div>
                 </div>
               </div>
@@ -90,6 +100,7 @@ export default function LoginPage() {
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Generic error block to display any type of error */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                 {error}
@@ -142,6 +153,13 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+
+            {checkingConfig && (
+              <div className="flex items-center justify-center py-2 text-gray-500">
+                <RefreshCw className="animate-spin h-4 w-4 mr-2" />
+                <span className="text-xs">Checking configuration...</span>
+              </div>
+            )}
 
             <div className="flex items-center justify-end">
               <div className="text-sm">
