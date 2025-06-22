@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 
-// Load environment variables in Node.js
+// Load environment variables in Node.js environment
 if (typeof process !== 'undefined' && process.env) {
   dotenv.config();
 }
@@ -19,9 +19,11 @@ const getEnvVar = (key: string): string => {
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
 const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
-// Debug logging to verify environment variables
-console.log("Supabase URL Loaded:", supabaseUrl);
-console.log("Supabase Anon Key Loaded:", supabaseAnonKey ? "Yes, key is present." : "No, key is MISSING.");
+// Logging for development purposes only
+if (process.env.NODE_ENV !== 'production') {
+  console.log("Supabase URL:", supabaseUrl ? "✓ Configured" : "✗ Missing");
+  console.log("Supabase Anon Key:", supabaseAnonKey ? "✓ Configured" : "✗ Missing");
+}
 
 export const isSupabaseConfigured = (): boolean => {
   return Boolean(supabaseUrl && supabaseAnonKey);
@@ -30,17 +32,17 @@ export const isSupabaseConfigured = (): boolean => {
 const createMockClient = () => {
   // Mock client for when Supabase is not configured
   const mockAuth = {
-    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-    getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-    signUp: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Supabase not configured' } }),
-    signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Supabase not configured' } }),
+    getSession: () => Promise.resolve({ data: { session: null }, error: { message: 'Database connection error. Please check your .env configuration.' } }),
+    getUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Database connection error. Please check your .env configuration.' } }),
+    signUp: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Database connection error. Please check your .env configuration.' } }),
+    signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: { message: 'Database connection error. Please check your .env configuration.' } }),
     signOut: () => Promise.resolve({ error: null }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-    resetPasswordForEmail: () => Promise.resolve({ data: {}, error: { message: 'Supabase not configured' } }),
-    updateUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Supabase not configured' } }),
-    refreshSession: () => Promise.resolve({ data: { session: null }, error: { message: 'Supabase not configured' } }),
-    resend: () => Promise.resolve({ data: {}, error: { message: 'Supabase not configured' } }),
-    verifyOtp: () => Promise.resolve({ data: { session: null, user: null }, error: { message: 'Supabase not configured' } })
+    resetPasswordForEmail: () => Promise.resolve({ data: {}, error: { message: 'Database connection error. Please check your .env configuration.' } }),
+    updateUser: () => Promise.resolve({ data: { user: null }, error: { message: 'Database connection error. Please check your .env configuration.' } }),
+    refreshSession: () => Promise.resolve({ data: { session: null }, error: { message: 'Database connection error. Please check your .env configuration.' } }),
+    resend: () => Promise.resolve({ data: {}, error: { message: 'Database connection error. Please check your .env configuration.' } }),
+    verifyOtp: () => Promise.resolve({ data: { session: null, user: null }, error: { message: 'Database connection error. Please check your .env configuration.' } })
   };
   
   const mockFrom = (table: string) => ({
@@ -73,9 +75,7 @@ const createMockClient = () => {
 
 export const supabase = (() => {
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn(
-      `Missing Supabase environment variables. Using mock client. Please check your .env file.`
-    );
+    console.error(`Missing Supabase environment variables. Using mock client. Please check your .env file and ensure it contains VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.`);
     return createMockClient() as any;
   }
   return createClient(supabaseUrl, supabaseAnonKey);
