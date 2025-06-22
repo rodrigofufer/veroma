@@ -9,12 +9,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   
-  // --- INICIO DEL CAMBIO ---
-  // Cambio 1: Extraer 'loading' del hook useAuth.
-  // El error ocurría porque usábamos 'loading' sin haberlo definido.
-  // Ahora lo obtenemos del contexto de autenticación, donde se llama 'authLoading'.
   const { user, signOut, role, loading: authLoading } = useAuth();
-  // --- FIN DEL CAMBIO ---
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,11 +79,7 @@ export default function Header() {
             </Link>
           </div>
           
-          {/* --- INICIO DEL CAMBIO --- */}
-          {/* Cambio 2: Usar 'authLoading' en lugar de 'loading'. */}
-          {/* Ahora la condición es correcta y no causará un error de referencia. */}
           {user && !authLoading && (
-          // --- FIN DEL CAMBIO ---
             <nav className="hidden md:flex items-center space-x-4">
               {allMenuItems.map(({ path, icon: Icon, label }) => {
                 const isOfficialProposal = path.includes('official=true');
@@ -107,4 +98,95 @@ export default function Header() {
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     } ${
                       (label === 'Admin Panel') ? 'border border-red-200 hover:border-red-300' :
-                      (label === 'Official Proposal') ? 'border border-
+                      (label === 'Official Proposal') ? 'border border-purple-200 hover:border-purple-300' : ''
+                    }`}
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {label}
+                  </Link>
+                );
+              })}
+              
+              <VotesDisplay />
+              
+              <button
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center transition-colors disabled:opacity-50"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                {signingOut ? 'Signing out...' : 'Sign Out'}
+              </button>
+            </nav>
+          )}
+
+          {/* Mobile menu button */}
+          {user && !authLoading && (
+            <div className="md:hidden">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {menuOpen && user && !authLoading && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-gray-200 bg-white"
+            >
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                {allMenuItems.map(({ path, icon: Icon, label }) => {
+                  const isOfficialProposal = path.includes('official=true');
+                  const linkPath = isOfficialProposal ? '/new-idea' : path;
+                  const isActiveLink = isOfficialProposal ? 
+                    (isActive('/new-idea') && new URLSearchParams(location.search).get('official') === 'true') :
+                    isActive(path);
+
+                  return (
+                    <Link
+                      key={path}
+                      to={linkPath + (isOfficialProposal ? '?official=true' : '')}
+                      onClick={() => setMenuOpen(false)}
+                      className={`block px-3 py-2 rounded-md text-base font-medium flex items-center transition-colors ${
+                        isActiveLink
+                          ? 'text-blue-800 bg-blue-50'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      } ${
+                        (label === 'Admin Panel') ? 'border border-red-200' :
+                        (label === 'Official Proposal') ? 'border border-purple-200' : ''
+                      }`}
+                    >
+                      <Icon className="h-5 w-5 mr-3" />
+                      {label}
+                    </Link>
+                  );
+                })}
+                
+                <div className="px-3 py-2">
+                  <VotesDisplay />
+                </div>
+                
+                <button
+                  onClick={handleSignOut}
+                  disabled={signingOut}
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center transition-colors disabled:opacity-50"
+                >
+                  <LogOut className="h-5 w-5 mr-3" />
+                  {signingOut ? 'Signing out...' : 'Sign Out'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </header>
+  );
+}
