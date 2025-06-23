@@ -234,12 +234,8 @@ export default function LandingPage() {
               <div className="mt-12 flex items-center">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-blue-700 bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center overflow-hidden">
-                      <img 
-                        src={`https://randomuser.me/api/portraits/${i % 2 === 0 ? 'women' : 'men'}/${i + 20}.jpg`}
-                        alt="User"
-                        className="w-full h-full object-cover"
-                      />
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-blue-700 bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg border-2 border-white/30">
+                      {i}
                     </div>
                   ))}
                 </div>
@@ -267,6 +263,7 @@ export default function LandingPage() {
                   src="https://images.pexels.com/photos/6150432/pexels-photo-6150432.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
                   alt="Community Participation" 
                   className="w-full h-[500px] object-cover"
+                  loading="eager"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/70 to-transparent"></div>
                 
@@ -495,15 +492,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* How It Works Section - Optimized for performance */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7 }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             <div className="inline-block mb-3 bg-blue-100 px-4 py-1 rounded-full">
               <div className="flex items-center">
                 <Shield className="h-4 w-4 mr-2 text-blue-600" />
@@ -517,26 +509,19 @@ export default function LandingPage() {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               How your participation translates into real-world change
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={testimonialsInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.2 }}
-            >
+            <div>
               <img 
                 src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
                 alt="Community Meeting" 
                 className="rounded-xl shadow-xl w-full h-[400px] object-cover"
+                loading="lazy"
               />
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={testimonialsInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.3 }}
-            >
+            <div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">The Path to Civic Change</h3>
               
               <div className="space-y-6">
@@ -545,7 +530,7 @@ export default function LandingPage() {
                     <span className="text-lg font-bold">1</span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">Submit an Idea</h4>
+                    <h4 className="font-medium text-gray-900">Submit an Idea</h4>
                     <p className="text-gray-600">Share your proposals, raise concerns, or start a vote on issues that matter in your community, city, or worldwide.</p>
                   </div>
                 </div>
@@ -555,7 +540,7 @@ export default function LandingPage() {
                     <span className="text-lg font-bold">2</span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">Gather Support</h4>
+                    <h4 className="font-medium text-gray-900">Gather Support</h4>
                     <p className="text-gray-600">Community members use their weekly votes to support ideas they believe in, creating a clear picture of priorities.</p>
                   </div>
                 </div>
@@ -565,7 +550,7 @@ export default function LandingPage() {
                     <span className="text-lg font-bold">3</span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">Reach Decision Makers</h4>
+                    <h4 className="font-medium text-gray-900">Reach Decision Makers</h4>
                     <p className="text-gray-600">Popular ideas gain visibility to representatives and authorities who can implement real changes in policy and infrastructure.</p>
                   </div>
                 </div>
@@ -575,12 +560,12 @@ export default function LandingPage() {
                     <span className="text-lg font-bold">4</span>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-800">Create Change</h4>
+                    <h4 className="font-medium text-gray-900">Create Change</h4>
                     <p className="text-gray-600">Track implementation progress as ideas transform into real-world actions and improvements in your community.</p>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -732,6 +717,7 @@ export default function LandingPage() {
                     src={idea.image}
                     alt={idea.title}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                   <div className="absolute top-4 left-4">
                     <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded">
@@ -892,7 +878,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-1">Response Time</h3>
-                    <p className="text-gray-600">We typically respond within 24-48 hours</p>
+                    <p className="text-gray-600">We typically respond within 24-48 business hours</p>
                   </div>
                 </div>
                 
