@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft, Eye, EyeOff, AlertTriangle, Loader } from 'lucide-react';
-import { isSupabaseConfigured } from '../utils/supabaseClient';
+import { isSupabaseConfigured, testSupabaseConnection } from '../utils/supabaseClient';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -14,9 +14,23 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [supabaseStatus, setSupabaseStatus] = useState<'checking' | 'connected' | 'error'>('checking');
 
   // Check if Supabase is configured
-  const supabaseConfigured = isSupabaseConfigured();
+  useEffect(() => {
+    const checkSupabase = async () => {
+      const configured = isSupabaseConfigured();
+      if (!configured) {
+        setSupabaseStatus('error');
+        return;
+      }
+      
+      const connectionTest = await testSupabaseConnection();
+      setSupabaseStatus(connectionTest ? 'connected' : 'error');
+    };
+    
+    checkSupabase();
+  }, []);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -29,9 +43,9 @@ export default function LoginPage() {
     e.preventDefault();
     setLoginAttempted(true);
     
-    if (!supabaseConfigured) {
-      setError('Supabase is not configured. Please check the .env file.');
-      toast.error('Database connection error. Please check the .env file.');
+    if (supabaseStatus !== 'connected') {
+      setError('Database connection error. Please try again later.');
+      toast.error('Database connection error. Please try again later.');
       return;
     }
     
@@ -39,6 +53,7 @@ export default function LoginPage() {
     setError(null);
     
     try {
+      console.log('Attempting to sign in with email:', email);
       toast.loading('Signing in...', { id: 'login', duration: 10000 });
       
       // Attempt to sign in
@@ -48,7 +63,6 @@ export default function LoginPage() {
       console.error('Login error:', err);
       toast.dismiss('login');
       setError(err instanceof Error ? err.message : 'An error occurred');
-      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -80,18 +94,19 @@ export default function LoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {/* This block will be displayed if environment variables are not present */}
-          {!supabaseConfigured && (
+          {supabaseStatus === 'error' && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
               <div className="flex items-start">
                 <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0" />
                 <div className="flex-1">
-                  <div className="font-medium text-sm">Database Not Configured</div>
+                  <div className="font-medium text-sm">Database Connection Error</div>
                   <div className="mt-1 text-xs">
-                    Please set your Supabase environment variables in the .env file:
-                    <br />• VITE_SUPABASE_URL = https://your-project.supabase.co
-                    <br />• VITE_SUPABASE_ANON_KEY = your-anon-key
+                    We're having trouble connecting to our database. This could be due to:
+                    <br />• Temporary service disruption
+                    <br />• Network connectivity issues
+                    <br />• Configuration problems
                   </div>
-                  <div className="mt-2 text-xs">Your .env file may need to be reloaded. Try restarting the development server.</div>
+                  <div className="mt-2 text-xs">Please try again later or contact support if the problem persists.</div>
                 </div>
               </div>
             </div>
@@ -166,7 +181,7 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit" 
-                disabled={loading || !supabaseConfigured}
+                disabled={loading || supabaseStatus !== 'connected'}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (

@@ -5,7 +5,8 @@ import {
   checkUserProfileExists,
   createProfileIfNeeded,
   isSupabaseConfigured,
-  syncEmailConfirmation
+  syncEmailConfirmation,
+  testSupabaseConnection
 } from '../utils/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -134,9 +135,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Initialize authentication
     const initializeAuth = async () => {
       try {
+        console.log('Initializing auth...');
+        
         // First check if Supabase is configured
         if (!isSupabaseConfigured()) {
           console.error('Supabase is not configured. Please check your environment variables.');
+          toast.error('Database connection error. Please check configuration.');
+          setLoading(false);
+          return;
+        }
+        
+        // Test connection
+        const connectionTest = await testSupabaseConnection();
+        if (!connectionTest) {
+          console.error('Cannot connect to Supabase');
+          toast.error('Cannot connect to database. Please check your connection.');
           setLoading(false);
           return;
         }
@@ -148,6 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         while (attempt < MAX_RETRIES) {
           try {
+            console.log(`Getting session attempt ${attempt + 1}...`);
             const response = await supabase.auth.getSession();
             sessionData = response.data;
             sessionError = response.error;
@@ -163,17 +177,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (sessionError) {
           console.error('Error getting session after retries:', sessionError);
+          toast.error('Authentication error: ' + sessionError.message);
           setLoading(false);
           return;
         }
         
         if (sessionData?.session) {
+          console.log('Session found, setting up user...');
           try {
             const profileExists = await checkUserProfileExists(sessionData.session.user.id);
             if (!profileExists) {
+              console.log('Creating profile for user...');
               await createProfileIfNeeded(sessionData.session.user.id, {
                 email: sessionData.session.user.email,
                 name: sessionData.session.user.user_metadata?.name || 'User',
+                lastname: sessionData.session.user.user_metadata?.lastname || '',
                 country: sessionData.session.user.user_metadata?.country || 'Unknown'
               });
             }
@@ -182,16 +200,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await syncEmailVerification(sessionData.session.user);
             const r = await fetchUserRole(sessionData.session.user.id);
             setRole(r);
+            console.log('User setup complete');
           } catch (userError) {
             console.error('Error initializing user data:', userError);
+            toast.error('Error setting up user profile');
           }
         } else {
+          console.log('No session found');
           setUser(null);
           setEmailVerified(false);
           setRole(null);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
+        toast.error('Authentication initialization failed');
         setUser(null);
         setEmailVerified(false);
       } finally {
@@ -202,6 +224,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', event, !!session);
+      
       if (mounted) {
         if (session?.user) {
           const profileExists = await checkUserProfileExists(session.user.id);
@@ -209,6 +233,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await createProfileIfNeeded(session.user.id, {
               email: session.user.email,
               name: session.user.user_metadata?.name || 'User',
+              lastname: session.user.user_metadata?.lastname || '',
               country: session.user.user_metadata?.country || 'Unknown'
             });
           }
@@ -226,6 +251,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       switch (event) {
         case 'SIGNED_IN':
+          console.log('User signed in');
           if (session?.user?.email_confirmed_at) {
             setEmailVerified(true);
             if (session?.user) {
@@ -246,10 +272,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           break;
         case 'SIGNED_OUT':
+          console.log('User signed out');
           setEmailVerified(false);
           setUser(null);
           setRole(null);
           navigate('/');
+          break;
+        case 'TOKEN_REFRESHED':
+          console.log('Token refreshed');
           break;
       }
     });
@@ -270,6 +300,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Show loading toast
       toast.loading('Signing in...', { id: 'auth-signin', duration: 30000 });
+      
+      console.log('Attempting to sign in user:', data.email);
       
       const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email.trim(),
@@ -300,6 +332,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Success - dismiss loading toast
       toast.dismiss('auth-signin');
+      console.log('Sign in successful');
       return authData;
       
     } catch (error) {
@@ -319,6 +352,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Clear any previous errors
         toast.loading('Creating your account...', { id: 'signup' });
 
+        console.log('Attempting to sign up user:', data.email);
+
         const { data: authData, error } = await supabase.auth.signUp({
             email: data.email.trim(),
             password: data.password.trim(),
@@ -327,8 +362,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 emailRedirectTo: `${window.location.origin}/email-confirmed`
             }
         });
-        if (error) throw error;
+        
+        if (error) {
+          console.error('Signup error:', error);
+          throw error;
+        }
+        
         if (authData.user) {
+            console.log('Signup successful, user created');
             toast.success('Please check your email to verify your account', { id: 'signup' });
             navigate('/verify-email', { 
                 state: { 

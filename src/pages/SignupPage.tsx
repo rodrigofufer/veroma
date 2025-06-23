@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ArrowLeft, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, AlertCircle, Loader } from 'lucide-react';
 import CountryAutocomplete from '../components/CountryAutocomplete';
 import PasswordStrengthIndicator from '../components/PasswordStrengthIndicator';
 import { validatePassword } from '../utils/passwordValidation';
+import { isSupabaseConfigured, testSupabaseConnection } from '../utils/supabaseClient';
+import toast from 'react-hot-toast';
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const { signUp } = useAuth();
+  const { signUp, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [supabaseStatus, setSupabaseStatus] = useState<'checking' | 'connected' | 'error'>('checking');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -27,6 +30,29 @@ export default function SignupPage() {
     name: '',
     lastname: '',
   });
+
+  // Check if Supabase is configured
+  useEffect(() => {
+    const checkSupabase = async () => {
+      const configured = isSupabaseConfigured();
+      if (!configured) {
+        setSupabaseStatus('error');
+        return;
+      }
+      
+      const connectionTest = await testSupabaseConnection();
+      setSupabaseStatus(connectionTest ? 'connected' : 'error');
+    };
+    
+    checkSupabase();
+  }, []);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handlePasswordChange = (password: string) => {
     setFormData(prev => ({ ...prev, password }));
@@ -80,13 +106,21 @@ export default function SignupPage() {
     setError(null);
 
     try {
+      if (supabaseStatus !== 'connected') {
+        setError('Database connection error. Please try again later.');
+        toast.error('Database connection error. Please try again later.');
+        return;
+      }
+
       // Validate form
       if (!validateForm()) {
+        setLoading(false);
         return;
       }
 
       if (!formData.terms) {
         setError('You must accept the terms and conditions');
+        setLoading(false);
         return;
       }
 
@@ -95,6 +129,7 @@ export default function SignupPage() {
       if (!passwordValidation.isValid) {
         setPasswordErrors(passwordValidation.errors);
         setError('Please ensure your password meets all requirements');
+        setLoading(false);
         return;
       }
 
@@ -127,7 +162,7 @@ export default function SignupPage() {
 
     } catch (err: any) {
       console.error('Signup form error:', err);
-      setError(err.message || 'An error occurred during signup');
+      setError(err.message || 'An error occurred during registration');
     } finally {
       setLoading(false);
     }
@@ -176,6 +211,25 @@ export default function SignupPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {/* Database connection error */}
+          {supabaseStatus === 'error' && (
+            <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+              <div className="flex items-start">
+                <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                <div className="flex-1">
+                  <div className="font-medium text-sm">Database Connection Error</div>
+                  <div className="mt-1 text-xs">
+                    We're having trouble connecting to our database. This could be due to:
+                    <br />• Temporary service disruption
+                    <br />• Network connectivity issues
+                    <br />• Configuration problems
+                  </div>
+                  <div className="mt-2 text-xs">Please try again later or contact support if the problem persists.</div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
@@ -339,10 +393,15 @@ export default function SignupPage() {
             <div>
               <button
                 type="submit"
-                disabled={loading || passwordErrors.length > 0}
+                disabled={loading || passwordErrors.length > 0 || supabaseStatus !== 'connected'}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating account...' : 'Sign up'}
+                {loading ? (
+                  <span className="flex items-center">
+                    <Loader className="animate-spin h-4 w-4 mr-2" />
+                    Creating account...
+                  </span>
+                ) : 'Sign up'}
               </button>
             </div>
           </form>

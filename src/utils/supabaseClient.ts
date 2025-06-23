@@ -6,16 +6,47 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VI
 
 // Check if Supabase is configured
 export const isSupabaseConfigured = (): boolean => {
-  return Boolean(supabaseUrl && supabaseAnonKey);
+  const configured = Boolean(supabaseUrl && supabaseAnonKey && supabaseUrl !== '' && supabaseAnonKey !== '');
+  console.log('Supabase configuration check:', {
+    hasUrl: Boolean(supabaseUrl),
+    hasKey: Boolean(supabaseAnonKey),
+    urlLength: supabaseUrl.length,
+    keyLength: supabaseAnonKey.length,
+    configured
+  });
+  return configured;
 };
 
-// Create Supabase client
+// Create Supabase client with better error handling
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
   },
+  global: {
+    headers: {
+      'X-Client-Info': 'veroma-web'
+    }
+  }
 });
+
+// Test connection function
+export const testSupabaseConnection = async (): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase.from('error_codes').select('code').limit(1);
+    if (error) {
+      console.error('Supabase connection test failed:', error);
+      return false;
+    }
+    console.log('Supabase connection test successful');
+    return true;
+  } catch (error) {
+    console.error('Supabase connection test error:', error);
+    return false;
+  }
+};
 
 // Helper functions
 export const checkUserProfileExists = async (userId: string): Promise<boolean> => {
@@ -46,6 +77,7 @@ export const createProfileIfNeeded = async (userId: string, userData: any): Prom
         id: userId,
         email: userData.email,
         name: userData.name || 'User',
+        lastname: userData.lastname || '',
         country: userData.country || 'Unknown'
       }]);
     
